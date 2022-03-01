@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    {{include './_header.html'}}
+
+    <style>
+        .coinType {
+            text-align: left;
+            width: 200px;
+            margin: auto;
+        }
+
+        .textColor1 {
+            color: #333333;
+        }
+
+        .titleStyle {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .convertibleProportionStyle {
+            font-size: 0.9rem;
+            color: #c5c5c5;
+        }
+
+        .bg1 {
+            margin-top: -20px;
+            margin-bottom: 30px;
+            padding: 10px;
+        }
+
+        .bg2 {
+            margin-top: 20px;
+            margin-bottom: 100px;
+            padding: 20px;
+        }
+
+        .jsnr {
+            margin-left: 0px;
+            margin-right: 0px;
+            border-radius: 5px;
+            background-color: #262c47;
+        }
+
+        .main {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 20px;
+            width: 300px;
+            height: 350px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+
+</head>
+
+<body>
+    {{include './_menu.html'}}
+
+    <div id="app" class="container-fluid main-content">
+
+        <div class="container">
+            <div class="row jsnr bg1">
+                <h5>{{lang.list[defLang].page.first_publish_project}}</h5>
+            </div>
+        </div>
+
+
+        <div class="container">
+
+            <div class="row jsnr bg2">
+
+
+                <section class="section-header pb-7 pb-lg-11 bg-soft">
+                    <div class="container">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-12 col-lg-6 order-2 order-lg-1"><img src="/images/publish-01.jpg"
+                                    class="w-100 img-fluid rounded" alt=""></div>
+                            <div class="col-12 col-lg-6 order-1 order-lg-2">
+                                <h1 class="display-5 mb-3">{[this.platform_currency.name]}</h1>
+                                <p class="lead">{[this.platform_currency.name]} is the Ethereum token of the
+                                    {[this.platform_currency.name]} network project. It is a new
+                                    generation
+                                    of
+                                    decentralized
+                                    video streaming platform based on native blockchain technology. The platform
+                                    distributes
+                                    {[this.platform_currency.name]}
+                                    token rewards to content viewers who share bandwidth and provides
+                                    high-definition video
+                                    content.
+                                    , To reduce the cost of video distribution. {[this.platform_currency.name]} Network
+                                    aims to develop more
+                                    effective
+                                    methods
+                                    to distribute any type of content and data globally through a paid peer-to-peer
+                                    network.</p>
+                                <p>{{lang.list[defLang].page.target}}: {[this.platform_currency.value]}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pattern bottom"></div>
+                </section>
+
+
+
+                <div class="col-sm-12">
+
+
+                    <div class="row align-items-center">
+                        <div class="col-12">
+
+                            <br>
+                            <br>
+                            <!-- Divider -->
+                            <hr class="bg-gray-900 mt-0 mb-8">
+
+                        </div>
+                        <div class="col-12 col-md text-center">
+
+                            <div>
+                                <!-- Heading -->
+                                <h1 class="h4 text-white mb-0">
+                                    <div v-if="this.disable">
+                                        {{lang.list[defLang].page.end_distance}}： <span id="entTime" class="text-primary-light">{[endTime]}</span>
+                                    </div>
+                                    <div v-else="">
+                                        {{lang.list[defLang].page.subscribe_buy_end}}
+                                    </div>
+                                </h1>
+                                <br>
+                                <!-- Text -->
+                                <p class="text-white-60 mb-4 mb-md-0">
+                                    {{lang.list[defLang].page.start_time}}：{[this.platform_currency.start_time]}
+                                </p>
+                                <br>
+
+                                <p class="text-white-60 mb-4 mb-md-0">
+                                    {{lang.list[defLang].page.end_time}}：{[this.platform_currency.end_time]}
+                                </p>
+                            </div>
+
+                        </div>
+                        <div class="col-12">
+
+                            <!-- Divider -->
+                            <hr class="bg-gray-900 mb-0 mt-8">
+                            <br>
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-12 col-md-3 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT-TRC20</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.usdt_trc20_exchange]}</p>
+                        <p><button @click="onClickParticipation('USDT-TRC20')" :disabled="!this.disable || !this.btn_disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT-ERC20</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.usdt_erc20_exchange]}</p>
+                        <p><button @click="onClickParticipation('USDT-ERC20')" :disabled="!this.disable || !this.btn_disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：ETH</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.eth_exchange]}</p>
+                        <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable || !this.btn_disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：BTC</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.btc_exchange]}</p>
+                        <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable || !this.btn_disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+
+
+
+
+                <div class="col-12">
+                    <br>
+                    <br>
+                    <br>
+                    <p>{{lang.list[defLang].page.project_introduction}}</p>
+
+                    <div class="convertibleProportionStyle">
+                        <p>AbAbout LETH:</p>
+
+                        <p>The Leth Network and protocol solves various challenges the video streaming industry faces
+                            today. First, tokens on the Leth blockchain are used as an incentive to encourage
+                            individual
+                            users to share their redundant computing and bandwidth resources as caching or relay nodes
+                            for
+                            video streams. This improves the quality of stream delivery and solves the “last-mile”
+                            delivery
+                            problem, the main bottleneck for traditional content delivery pipelines, especially for high
+                            resolution high bitrate 4k, 8k and next generation streams. Second, with sufficient network
+                            density the majority of viewers will pull streams from peering caching nodes, allowing video
+                            platforms to significantly reduce content delivery network (CDN) costs. More importantly, by
+                            introducing tokens as an end-user incentive mechanism the Leth Network allows video
+                            platforms
+                            to deepen viewer engagement, drive incremental revenues, and differentiate their content and
+                            viewing experience from their competitors.
+                        </p>
+
+                        <p>
+                            The Leth blockchain introduces three main novel concepts:
+                        </p>
+
+                        <p>
+                            ● Multi-Level BFT: A modified BFT consensus mechanism which allows thousands of nodes to
+                            participate in the consensus process, while still supporting very high transaction
+                            throughput
+                            (1,000+ TPS). The core idea is to have a small set of nodes, which form the validator
+                            committee,
+                            produce a chain of blocks as fast as possible using a PBFT-like process. Then, the thousands
+                            of
+                            consensus participants, called guardians, finalize the chain generated by the validator
+                            committee at regular checkpoint blocks. The name multi-level BFT consensus mechanism
+                            reflects
+                            the fact that the validator/guardian division provides multiple levels of security
+                            guarantee.
+                            The validator committee provides the first level of consensus — with 10 to 20 validators,
+                            the
+                            committee can come to consensus quickly. The guardian pool forms the second line of defense.
+                            With thousands of nodes, it is substantially more difficult for attackers to compromise the
+                            integrity of the network, and thus provides a much higher level of security. We believe this
+                            mechanism achieves a good balance among transaction throughput, consistency, and level of
+                            decentralization, the three pillars of the so-called “impossible triangle”.
+                        </p>
+
+                        <p>● Aggregated Signature Gossip Scheme: A basic all-to-all broadcasting of the checkpoint block
+                            hash could work between guardian nodes, but it yields quadratic communication overhead, and
+                            therefore cannot scale to 1,000+ nodes. Instead, we propose an Aggregated Signature Gossip
+                            Scheme which significantly reduces messaging complexity. Each guardian node keeps combining
+                            the
+                            partially aggregated signatures from all its neighbors, and then gossips out the aggregated
+                            signature. This way the signature share of each node can reach other nodes at an exponential
+                            rate, 2 leveraging the gossip protocol. In addition, the signature aggregation keeps the
+                            size of
+                            the node-to-node messages small, and thus further reduces the communication overhead.
+                        </p>
+
+                        <p></p>
+
+                        <p>● Resource Oriented Micropayment Pool: An off-chain “Resource Oriented Micropayment Pool”
+                            that is
+                            purpose-built for video streaming. It allows a user to create an off-chain micropayment pool
+                            that any other user can withdraw from using off-chain transactions, and is double-spend
+                            resistant. It is much more flexible compared to off-chain payment channels.
+                        </p>
+
+                        <p>Ticker: {[this.platform_currency.name]}</p>
+
+                        <p>Total Supply: {[this.platform_currency.value]} {[this.platform_currency.name]}</p>
+
+                        <p>Protocol: TRC-20</p>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="color: black">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="participateTitle">{{lang.list[defLang].page.enter_participation}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="col-md-8" style="margin-top: 8px;">{{lang.list[defLang].page.available_balance}}：<span style="color:#cc3333;">{[this.balance.curr_balance]} {[coinType]}</span></div>
+                            <div class="col-md-auto ml-auto text-right">
+                                <div @click="onClickAllIn()" class="btn btn-link">{{lang.list[defLang].page.all_in}}</div>
+                            </div>
+                        </div>
+                        <form>
+                            <div class="form-group">
+                                <!-- <form> -->
+                                <div class="form-row">
+                                    <div class="col-md-5 mb-5 text-right">
+                                        <label for="coin_txt" class="col-form-label text-right">{[coinType]}</label>
+                                        <input id="coin_txt" v-model="form.coin_amount" type="number" class="form-control text-right" min="0" maxlength="99">
+                                    </div>
+                                    <div class="col-md-1 mb-1 text-center">
+                                        <label class="col-form-label">=></label>
+                                        <label class="col-form-label">≈</label>
+                                    </div>
+                                    <div class="col">
+                                        <label class="col-form-label" for="target_coin">{[platform_currency.symbol]}</label>
+                                        <input id="target_coin" :value="(this.exchange/1)*this.form.coin_amount" type="text" class="form-control" readonly="readonly">
+                                    </div>
+                                </div>
+                                <input type="hidden" class="form-control" :value="this.form.coin_type">
+                                <!-- </form> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer text-center">
+                        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                        <button @click="onClickEnter()" :disabled="this.loading" type="button" class="btn btn-primary btn-block">{{lang.list[defLang].page.participation}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+    {{include './_footer.html'}}
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                is_login: '{{isLogin}}',
+                loading: false,
+                temp_setInterval: null,
+                alertObj: JSON.parse('{{lang.list[defLang].page.login.alert}}'.replace(/&#34;/g, '"')),
+                coinType: 'usdt_trc20',
+                exchange: 0,
+                endTime: '0{{lang.list[defLang].page.day}} 0{{lang.list[defLang].page.hour}} 0{{lang.list[defLang].page.minute}} 0{{lang.list[defLang].page.second}}',
+                disable: true,
+                btn_disable: false,
+                platform_currency: {
+                    name: '',
+                    value: 0,
+                    usdt_trc20: 0,
+                    usdt_trc20_exchange: 0,
+                    usdt_erc20: 0,
+                    usdt_erc20_exchange: 0,
+                    withdraw_charges: 0,
+                    eth_exchange: 0,
+                    btc_exchange: 0,
+                    start_time: 0,
+                    end_time: 0,
+                    curr_time: 0,
+                },
+                balance: {
+                    USDT_TRC20: 0,
+                    USDT_ERC20: 0,
+                    ETH: 0,
+                    BTC: 0,
+                    curr_balance: 0
+                },
+                form: {
+                    target_amount: 0,
+                    coin_price: 0,
+                    coin_amount: 0,
+                    coin_type: 'usdt_trc20',
+                }
+            },
+            methods: {
+                onClickParticipation(type) {
+                    if (this.is_login == 'false') {
+                        document.location.href = '/login'
+                        return
+                    }
+
+                    this.coinType = type.replace('-', '_')
+                    let key = type.toLocaleLowerCase().replace('-', '_')
+                    this.exchange = this.platform_currency[key + '_exchange']
+                    console.log('key', key, this.exchange)
+                    this.balance.curr_balance = this.balance[this.coinType]
+
+                    this.form.coin_type = this.coinType
+                    this.form.coin_amount = 0
+                    this.form.coin_price = 0
+                    this.form.target_amount = 0
+
+                    $('#participate').modal("show");
+                },
+                onClickEnter() {
+                    this.form.coin_price = this.exchange
+                    this.form.target_amount = $('#target_coin').val()
+                    this.form.coin_type = this.form.coin_type.toLocaleLowerCase()
+
+                    if (this.form.target_amount <= 0) {
+                        return
+                    }
+                    if (isNaN(this.form.target_amount)) {
+                        tip('please try again later!')
+                        return
+                    }
+
+                    this.loading = true
+                    this.post('/api/startup', this.form, (data) => {
+                        this.loading = false
+                        if (data.flag != 'ok') {
+                            tip(data.flag)
+                        } else {
+                            tip('{{lang.list[defLang].page.participation_successful}}', () => {
+                                document.location.reload()
+                            })
+                        }
+                    })
+                },
+                onClickAllIn() {
+                    this.form.coin_type = this.coinType
+                    this.form.coin_amount = this.balance.curr_balance
+                },
+                zero(n) {
+                    return n < 10 ? '0' + n : n
+                },
+                round(num, intLen = 2, dotLaterLen = 6) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return Number(`${s}.${zl}`)
+                },
+                lessen(num, min, len) {
+                    let n = num / min
+                    return this.round(n, len)
+                },
+                formatTime(t) {
+                    let d = Math.floor(t / (60 * 60 * 24))
+                    let h = this.zero(Math.floor((t / (60 * 60)) % 24))
+                    let m = this.zero(Math.floor(t / (60) % 60))
+                    let s = this.zero(Math.floor(t % 60))
+                    return `${d}{{lang.list[defLang].page.day}} ${h}{{lang.list[defLang].page.hour}} ${m}{{lang.list[defLang].page.minute}} ${s}{{lang.list[defLang].page.second}}`
+                },
+                updateTime() {
+                    this.temp_setInterval = setInterval(() => {
+                        let currTime = new Date().getTime() / 1000
+                        let endTime = new Date(this.platform_currency.end_time.replace(/-/g, '/')).getTime() / 1000
+                        let defTime = endTime - currTime
+                        $('#entTime').html(this.formatTime(defTime))
+                        // console.log(`currTime:${currTime}, entTime:${entTime}, defTime:${defTime}`, typeof this.platform_currency.end_time, this.platform_currency.end_time)
+                        if (defTime >= 0) {
+                            this.disable = true
+                        } else {
+                            this.disable = false
+                            clearInterval(this.temp_setInterval)
+                        }
+                    }, 100)
+                },
+
+                initWS() {
+                    let ws = new WebSocket('{{lang.ws}}/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 6000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
+                        this.platform_currency.usdt_trc20_exchange = this.round(1 / res.platform.price, 1, 6)
+                        if (this.platform_currency.usdt_trc20_exchange) {
+                            this.btn_disable = true
+                        }
+                        ws.close()
+                        this.getPrice()
+                    }
+                },
+
+                getPrice() {
+                    this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                        let a = data.data.value
+                        let btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd)
+                        let eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd)
+                        this.platform_currency.usdt_erc20_exchange = this.round(this.platform_currency.usdt_trc20_exchange, 1, 6)
+                        this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_trc20_exchange * eth, 1, 6)
+                        this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_trc20_exchange * btc, 1, 6)
+                    })
+                },
+
+                getObjBySymbol(arr, symbol) {
+                    for (let i = 0; i < arr.length; i++) {
+                        let item = arr[i]
+                        if (item.symbol == symbol) {
+                            return item
+                        }
+                    }
+                    return null
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            tip(err.statusText);
+                        }
+                    })
+                },
+                init() {
+                    this.get('/api/startup', {}, (data) => {
+                        if (this.is_login == 'true') {
+                            this.balance.USDT_TRC20 = data.data.user['usdt_trc20']
+                            this.balance.USDT_ERC20 = data.data.user['usdt_erc20']
+                            this.balance.ETH = data.data.user['eth']
+                            this.balance.BTC = data.data.user['btc']
+                        }
+
+                        this.platform_currency = data.data.currency
+
+                        // this.platform_currency.usdt_trc20_exchange = data.data.currency.usdt_exchange
+                        // this.platform_currency.usdt_erc20_exchange = 0
+                        // this.platform_currency.eth_exchange = 0
+                        // this.platform_currency.btc_exchange = 0
+
+                        this.platform_currency.start_time = moment(this.platform_currency.start_time).format('YYYY-MM-DD HH:mm:ss')
+                        this.platform_currency.end_time = moment(this.platform_currency.end_time).format('YYYY-MM-DD HH:mm:ss')
+                        this.updateTime()
+
+                        this.initWS()
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

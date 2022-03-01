@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{lang.list[defLang].title}}</title>
+    {{include './_style.html'}}
+    <style>
+        .overflow-text2 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .c1 {
+            background-color: #f00;
+        }
+
+        .c2 {
+            background-color: #0f0;
+        }
+
+        .c3 {
+            background-color: #00f;
+        }
+
+        .t1 {
+            font-size: 0.65rem;
+        }
+
+        .t11 {
+            color: #98ffff;
+            font-size: 6px;
+        }
+
+        .hr1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+            border: 0.5px solid #333;
+        }
+
+        .tb1 {
+            background-color: #ff000000;
+        }
+
+        .bd-right {
+            border-right: 1px solid #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="placeholder-t"></div>
+
+    <div id="app">
+        <div class="uk-flex">
+            <div class="uk-flex-left uk-flex-2 overflow-text2 uk-width-1-2 bd-right">
+                <!-- marketing -->
+                <div style="height: 233px; overflow: hidden; background-color: #1e2126;">
+                    <div class="t1">Currency Last Price Change</div>
+                    <table class="t1 tb1" style="height: 210px; line-height: 1;" border=0 cellspacing=1 frame=void>
+                        <tr :id="item.node.id" v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:20px;cursor: pointer;">
+                            <td class="col-4 text-left">{[item.node.symbol]}</td>
+                            <td class="col-4 text-right">{[item.node.priceUsd]}</td>
+                            <td class="col-4 text-right">
+                                <span v-if="item.node.changePercent24Hr>0" class="text-success">{[item.node.changePercent24Hr]}</span>
+                                <span v-if="item.node.changePercent24Hr<0" class="text-danger">{[item.node.changePercent24Hr]}</span>
+                                <span v-if="item.node.changePercent24Hr==0">{[item.node.changePercent24Hr]}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- bug && sell -->
+                <div style="height: 233px; overflow: hidden; background-color: #1e2126;">
+                    <div class="t1">{{lang.list[defLang].page.lastest}} {[newPrice]} {[symbol1]}/USDT</div>
+                    <div>
+                        <table class="t1 tb1" style="height: 110px; line-height: 1;">
+                            <tbody class="t11" style="vertical-align:bottom;">
+                                <tr v-for="item,index in market.sell">
+                                    <td class="uk-text-danger">{{lang.list[defLang].page.sell}}{[market.len-index]}</td>
+                                    <td>{[item.price]}</td>
+                                    <td>{[item.amount]}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <hr class="hr1">
+                        <table class="t1 tb1" style="height: 110px; line-height: 1;">
+                            <tbody class="t11" style="vertical-align:top;">
+                                <tr v-for="item,index in market.buy">
+                                    <td class="uk-text-success">{{lang.list[defLang].page.buy}}{[index+1]}</td>
+                                    <td>{[item.price]}</td>
+                                    <td>{[item.amount]}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- k-line -->
+            <div class="uk-flex-right overflow-text2 uk-width-1-1">
+                <div id="paint_chart" style="width:100%;height:466px;overflow:hidden;margin: 0 auto;">
+                    <iframe style="border-style: none;" border="0" width="100%" height="100%" id="market_chart" :src="iframeUrl"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="uk-flex">
+            <div class="uk-flex-left overflow-text2 t1 uk-width-1-2" style="padding: 5px;">
+                <div class="t1">{{lang.list[defLang].page.available}}：0.000000 USDT</div>
+                <hr class="hr1">
+                <div>
+                    <div class="form-group row">
+                        <label for="mairuJia">{{lang.list[defLang].page.buy_price}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label for="mairuJia">{{lang.list[defLang].page.buy_amount}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label>{{lang.list[defLang].page.buy}}</label>
+                        <div>
+                            <button class="uk-button uk-button-primary uk-width-1-1">{{lang.list[defLang].page.buy}} {[symbol1]}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-flex-right overflow-text2 t1  uk-width-1-2" style="padding: 5px;">
+                <div class="t1">{{lang.list[defLang].page.available}}：0.000000 {[symbol1]}</div>
+                <hr class="hr1">
+                <div>
+                    <div class="form-group row">
+                        <label for="mairuJia">{{lang.list[defLang].page.sell_price}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label for="mairuJia">{{lang.list[defLang].page.sell_amount}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label>{{lang.list[defLang].page.sell}}</label>
+                        <div>
+                            <button class="uk-button uk-button-danger uk-width-1-1">{{lang.list[defLang].page.sell}} {[symbol1]}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="placeholder-b"></div>
+
+    {{include './_menu.html'}}
+
+
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                iframeUrl: '',
+                symbol: '',
+                symbol1: '',
+                statup: {
+                    symbol: ''
+                },
+                list: [],
+                shishichengjiao: [],
+                newPrice: 0,
+                market: {
+                    len: 5,
+                    buy: [],
+                    sell: [],
+                }
+            },
+            methods: {
+                onClickGo(symbol) {
+                    let url = '/market/?symbol=' + symbol.toLocaleLowerCase() + 'usdt'
+                    document.location = url
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                getQueryVariable(variable) {
+                    var query = window.location.search.substring(1);
+                    var vars = query.split("&");
+                    for (var i = 0; i < vars.length; i++) {
+                        var pair = vars[i].split("=");
+                        if (pair[0] == variable) { return pair[1]; }
+                    }
+                    return (false);
+                },
+                round(num, intLen = 2, dotLaterLen = 6) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return `${s}.${zl}`
+                },
+                lessen(num, min, len) {
+                    let n = num / min
+                    return this.round(n, len)
+                },
+                coinList(data) {
+                    let _t = this
+                    let a = data
+                    a.forEach(function (item) {
+                        item.node = {}
+                        item.node.id = item.name.toLocaleLowerCase()
+                        item.node.name = item.name
+                        item.node.symbol = item.symbol
+                        item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
+                        item.node.priceUsd = _t.round(item.priceUsd, 1)
+                        item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
+                        item.node.supply = _t.round(item.supply, 6, 2)
+                        item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
+                        item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 1, 2)
+                    })
+                    let ptb = {
+                        node: {
+                            id: _t.statup.name.toLocaleLowerCase(),
+                            name: _t.statup.name,
+                            symbol: _t.statup.symbol,
+                            logo: _t.statup.icon,
+                            priceUsd: _t.round(0, 1),
+                            marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
+                            supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
+                            volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
+                            changePercent24Hr: _t.round(0, 1, 2),
+                            rank: this.statup.sort,
+                        }
+                    }
+                    if (this.statup.sort == 0 || this.statup.sort > a.length) {
+                        a.push(ptb)
+                    } else {
+                        a.splice(this.statup.sort - 1, 0, ptb)
+                    }
+                    this.list = a
+                },
+                initWS() {
+                    let ws = new WebSocket('{{lang.ws}}/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 60000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
+                        this.list.forEach(function (item) {
+                            let key = item.node.id
+                            if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
+                                let v = res.platform.price
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 1, 4)
+                                item.node.changePercent24Hr = _t.round(res.platform.price_percent * res.platform.ts_percent, 1, 2)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
+
+                                if (_t.symbol == _t.statup.name.toLocaleLowerCase() + 'usdt') {
+                                    _t.newPrice = _t.round(v, 2, 4)
+                                    window.postMessage({ data: _t.buySell(v) }, '/');
+                                }
+                            }
+                            let v = res.cache[key]
+                            if (v) {
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 1, 4)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
+                            }
+                        })
+                    }
+                },
+                buySell(price) {
+                    let len = 1 + Math.floor(Math.random() * 4)
+                    let a = []
+                    for (let i = 0; i < len; i++) {
+                        let ts = new Date().getTime()
+                        let item = {
+                            id: ts,
+                            amount: Math.random() * 99999,
+                            price: price + price / 100 * Math.random(),
+                            direction: Math.random() * 5 > 1 ? 'buy' : 'sell',
+                            tradeId: ts,
+                            ts: ts,
+                        }
+                        a.push(item)
+                    }
+                    return {
+                        ts: '',
+                        ch: "market.ethusdt.trade.detail",
+                        tick: { data: a },
+                    }
+
+                },
+                getList() {
+                    this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                        this.coinList(data.data.value)
+                        this.initWS()
+                    })
+                },
+                init() {
+                    let _t = this
+                    this.get('/api/startup', {}, (data) => {
+                        this.statup = data.data.currency
+                        this.getList()
+                    })
+
+                    this.symbol = this.getQueryVariable('symbol')
+                    this.symbol1 = this.symbol.substring(0, this.symbol.length - 4).toUpperCase()
+                    this.iframeUrl = '/KLineChart/index.html?symbol=' + this.symbol
+
+                    for (let i = 0; i < this.market.length; i++) {
+                        this.market.sell[{ price: '', amount: '' }]
+                        this.market.buy[{ price: '', amount: '' }]
+                    }
+
+                    window.addEventListener('message', (e) => {
+                        var data = e.data;
+                        if (data.d) {
+                            this.newPrice = data.d.close
+                            return
+                        }
+
+                        if (!data.data) {
+                            console.log(data)
+                            return
+                        }
+
+                        let a = data.data.tick.data
+                        a.forEach(function (item) {
+                            item.ts = moment(item.ts).format('YYYY-MM-D HH:mm:ss')
+                            // item.price = _t.round(item.price, 2, 4)
+                            // item.amount = _t.round(item.amount, 2)
+                            item.price = item.price
+                            item.amount = item.amount
+                        })
+                        for (let i = 0; i < a.length; i++) {
+                            let item = a[i]
+                            if (this.shishichengjiao.length > 10) {
+                                this.shishichengjiao.unshift(item)
+                                this.shishichengjiao.pop()
+                            } else {
+                                this.shishichengjiao.push(item)
+                            }
+
+                            const len = this.market.len
+                            if (item.direction == 'sell') {
+                                this.market.sell.unshift(item)
+                                if (this.market.sell.length > len) {
+                                    this.market.sell.pop()
+                                }
+                                this.market.sell.sort()
+                            } else {
+                                this.market.buy.unshift(item)
+                                if (this.market.buy.length > len) {
+                                    this.market.buy.pop()
+                                }
+                                this.market.buy.sort()
+                            }
+                        }
+                    }, false);
+                }
+            },
+            mounted() {
+                this.init()
+            }
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>
