@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    {{include '../_header.html'}}
+    <style>
+        #qrcode>canvas {
+            background-color: #fff;
+            padding: 10px;
+        }
+
+        .bg01 {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: #202b3f;
+        }
+
+        .p0 {
+            padding: 0px;
+        }
+
+        .profilePicture {
+            width: 60px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    {{include '../_menu.html'}}
+
+    <div id="app" class="container-fluid main-content p0">
+        {{include './_user_info.html'}}
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-12">
+                    {{include './_menu.html'}}
+                </div>
+                <div class="col-md-9 col-sm-12">
+
+                    <div class="bd-example">
+                        <div class="form-row align-items-center">
+                            <div class="col-12"><label for="invite_txt">{{lang.list[defLang].page.invitation_code}}</label></div>
+                            <div class="col-sm-9 my-1">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="invite_txt" :value="invite_code"
+                                        :readOnly="readOnly">
+                                </div>
+                            </div>
+                            <div class="col-auto my-1">
+                                <button @click="onClickCopyText('invite_txt')" type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bd-example">
+                        <div class="form-row align-items-center">
+                            <div class="col-12"><label for="invite_url">{{lang.list[defLang].page.invitation_link}}</label></div>
+                            <div class="col-sm-9 my-1">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="invite_url"
+                                        :value="'http://'+domain+'/reg?invite='+invite_code" :readOnly="readOnly">
+                                </div>
+                            </div>
+                            <div class="col-auto my-1">
+                                <button @click="onClickCopyText('invite_url')" type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bd-example">
+                        <div class="form-row align-items-center">
+                            <div class="col-12">{{lang.list[defLang].page.qr_code}}</div>
+                            <div class="col-sm-9 my-1">
+                                <div id="qrcode"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul v-for="item in this.list" class="row">
+                        <li class="col">{[item.id]}</li>
+                        <li class="col">{[item.email]}</li>
+                        <li class="col">{[item.status]}</li>
+                        <li class="col">{[item.amount/1000000]} usdt</li>
+                        <li class="col">{[item.create_datetime]}</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    {{include '../_footer.html'}}
+
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                id: '{{session.user.id}}',
+                loading: false,
+                list: [],
+                readOnly: 'readOnly',
+                invite_code: '{{invite_code}}',
+                domain: '{{lang.domain}}'
+            },
+            methods: {
+                onClickCopyText(e) {
+                    this.readOnly = ''
+                    $('#' + e).val()
+                    $('#' + e).select()
+                    document.execCommand("copy")
+                    alert('{{lang.list[defLang].page.copy_successful}} ：\n' + $('#' + e).val())
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                amount(trades) {
+                    let total = 0
+                    for (let i = 0; i < trades.length; i++) {
+                        total += trades[i].amount
+                    }
+                    return total
+                },
+                init() {
+                    this.get(`/api/invite-trade-list/${this.id}`, {}, (data) => {
+                        console.log(data)
+                        data.data.forEach(data => {
+                            data.status = data.status == 1 ? '{{lang.list[defLang].page.activated}}' : '{{lang.list[defLang].page.unactivated}}'
+                            data.create_datetime = moment(data.create_datetime).format('YYYY/MM/DD h:mm:ss')
+                            data.amount = this.amount(data.trade)
+                        })
+                        this.list = data.data
+                    })
+
+                    jQuery('#qrcode').qrcode({
+                        width: 128, height: 128, text: 'http://' + this.domain + '/reg?invite=' + this.invite_code
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

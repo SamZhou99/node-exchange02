@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    {{include '../_header.html'}}
+    <style>
+        .bg01 {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: #202b3f;
+        }
+
+        .p0 {
+            padding: 0px;
+        }
+
+        .profilePicture {
+            width: 60px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    {{include '../_menu.html'}}
+
+    <div id="app" class="container-fluid main-content p0">
+        {{include './_user_info.html'}}
+
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-12">
+                    {{include './_menu.html'}}
+                </div>
+                <div class="col-md-9 col-sm-12">
+
+                    <div v-if="status==3">
+                        <div class="h4">{{lang.list[defLang].page.withdraw}}</div>
+                        <hr>
+                        <div class="form-group col-md-12">
+                            <label for="cointype">{{lang.list[defLang].page.select_withdraw_type}}</label>
+                            <select v-model="form.coin_type" @change="onChangeSelect" class="form-control" id="cointype">
+                                <option v-for="item in this.coin_type" :value="item">{[item.label]}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="address">{{lang.list[defLang].page.withdraw_address}}</label>
+                            <input v-model="form.address" type="text" class="form-control" id="address" aria-describedby="">
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="wallet_address">{{lang.list[defLang].page.withdraw}} {{lang.list[defLang].page.amount}}</label>
+                            <input v-model="form.apply_amount" @keyup="onChangeInput" type="number" class="form-control" id="wallet_address" aria-describedby="" min="0.00000001">
+                            <div class="form-row m-1">
+                                <div class="col-sm-6 "><small id="" class="form-text text-muted">{{lang.list[defLang].page.available}}：{[user[form.coin_type.key]]} {[form.coin_type.label]}</small></div>
+                                <div class="col-sm-6 text-right"><button @click="onClickAllIn()" class="btn btn-outline-primary btn-sm">{{lang.list[defLang].page.all_in}}</button></div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="wallet_address">{{lang.list[defLang].page.charges}}</label>
+                            <input :value="form.coin_type.charges" type="text" class="form-control" id="wallet_address" aria-describedby="" readOnly="readOnly">
+                        </div>
+
+                        <div class="form-group row col-md-12">
+                            <div class="col-sm-6 form-text text-muted">{{lang.list[defLang].page.real_withdraw_amount}}：</div>
+                            <div class="col-sm-6 text-right">{[form.real_amount]} {[form.coin_type.label]}</div>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <button @click="onClickSubmit()" class="btn btn-primary btn-block">{{lang.list[defLang].page.submit}}</button>
+                        </div>
+
+                        <hr>
+                        <div class="form-group col-md-12" style="font-size:12px">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">{{lang.list[defLang].page.coin_type}}</th>
+                                        <th scope="col">{{lang.list[defLang].page.apply_for_amount}}</th>
+                                        <th scope="col">{{lang.list[defLang].page.real_withdraw_amount}}</th>
+                                        <th scope="col">{{lang.list[defLang].page.withdraw_address}}</th>
+                                        <th scope="col">{{lang.list[defLang].page.withdraw_status}}</th>
+                                        <th scope="col">{{lang.list[defLang].page.withdraw_time}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in this.withdraw_list">
+                                        <th scope="row">{[item.id]}</th>
+                                        <td>{[item.type]}</td>
+                                        <td>{[item.apply_amount]}</td>
+                                        <td>{[item.real_amount]}</td>
+                                        <td>{[item.address]}</td>
+                                        <td>
+                                            <a @click="onClickShowReason(item.failed_reason)" v-if="item.status==2" href="javascript:void(0);">{[item.statusText]}</a>
+                                            <div v-else="">{[item.statusText]}</div>
+                                        </td>
+                                        <td>{[item.create_datetime]}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <div v-else="">
+                        <a href="/me/authentication">{{lang.list[defLang].page.withdraw_please_verify}}</a>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="color: black">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="participateTitle">{{lang.list[defLang].page.reject_the_reason}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        {[failed_reason]}
+
+                    </div>
+                    <div class="modal-footer text-center">
+                        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                        <!-- <button @click="onClickEnter()" :disabled="this.loading" type="button" class="btn btn-primary btn-block">保存</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {{include '../_footer.html'}}
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                status: '',
+                id: '{{session.user.id}}',
+                user: {},
+                coin_type: [
+                    { label: 'BTC', key: 'btc', value: '0', charges: '0.0002' },
+                    { label: 'ETH', key: 'eth', value: '1', charges: '0.002' },
+                    { label: 'USDT-TRC20', key: 'usdt_trc20', value: '2', charges: '1' },
+                ],
+
+                form: {
+                    coin_type: null,
+
+                    user_id: '{{session.user.id}}',
+                    apply_amount: 0,
+                    real_amount: 0,
+                    charges: 0,
+                    type: '',
+                    address: '',
+                },
+
+                withdraw_list: [],
+
+                failed_reason: '',
+            },
+            methods: {
+                onClickShowReason(failed_reason) {
+                    this.failed_reason = failed_reason
+                    $('#participate').modal("show");
+                },
+                onClickSubmit() {
+                    if (this.loading) {
+                        return
+                    }
+                    this.form.type = this.form.coin_type.key
+                    this.form.charges = this.form.coin_type.charges
+                    console.log(this.form)
+
+                    if (this.form.apply_amount <= 0 || this.form.real_amount <= 0 || this.form.charges <= 0 || this.form.type == '' || this.form.address == '') {
+                        tip('Please fill out the form completely!')
+                        return
+                    }
+
+                    if (this.form.real_amount <= 0) {
+                        tip('The quantity is too small!')
+                        return
+                    }
+
+                    this.post('/api/withdraw-applyfor', this.form, (data) => {
+                        if (data.flag != 'ok') {
+                            tip(data.flag)
+                            return
+                        }
+
+                        tip('submitted successfully!', () => {
+                            window.location.reload()
+                        })
+                    })
+                },
+                onClickAllIn() {
+                    this.form.apply_amount = this.user[this.form.coin_type.key]
+                    this.onChangeInput()
+                },
+                onChangeInput() {
+                    if (this.form.apply_amount <= 0) {
+                        this.form.real_amount = 0
+                        return
+                    }
+                    this.form.real_amount = this.round(this.form.apply_amount - this.form.coin_type.charges)
+                },
+                onChangeSelect(value) {
+                    console.log(value)
+                },
+                round(num, intLen = 2, dotLaterLen = 8) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return `${s}.${zl}`
+                },
+                getStatus(status) {
+                    if (status == 1) {
+                        return '{{lang.list[defLang].page.withdraw_apply_for}}'
+                    }
+
+                    if (status == 2) {
+                        return '{{lang.list[defLang].page.withdraw_reject}}'
+                    }
+
+                    if (status == 3) {
+                        return '{{lang.list[defLang].page.withdraw_pass}}'
+                    }
+
+                    if (status == 4) {
+                        return '{{lang.list[defLang].page.withdraw_succeed}}'
+                    }
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                initWithdrawList() {
+                    const t = this
+                    this.get('/api/withdraw-log', {}, (data) => {
+                        let a = data.data
+                        a.forEach(function (item) {
+                            item.statusText = t.getStatus(item.status)
+                            item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
+                        })
+                        this.withdraw_list = a
+                    })
+                },
+                init() {
+                    this.form.coin_type = this.coin_type[0]
+
+                    this.get('/api/authentication', {}, (data) => {
+                        if (data.flag != 'ok') {
+                            console.log(data.falg)
+                            return
+                        }
+                        if (data.data.auth) {
+                            this.status = data.data.auth.status
+                        }
+
+                        this.get('/api/me', {}, (data) => {
+                            if (data.flag != 'ok') {
+                                console.log(data.falg)
+                                return
+                            }
+                            if (data.data) {
+                                this.user = data.data
+                            }
+                        })
+                    })
+
+                    this.initWithdrawList()
+
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="/bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css">
+    <script src="/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/popper/1.12.5/popper.min.js"></script>
+    <script src="/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <!-- vue -->
+    <script src="/default/js/vue.js"></script>
+    <!-- moment -->
+    <script src="/default/js/moment.js"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: .5rem;
+            height: .5rem;
+            background: hsla(0, 100%, 50%, 0);
+        }
+
+        ::-webkit-scrollbar-track {
+            border-radius: 0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 0;
+            background-color: rgba(66, 66, 66, 0.5);
+            transition: all .2s;
+            border-radius: .5rem;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            background-color: #21293b;
+        }
+
+        .left-width,
+        .right-width {
+            min-width: 250px;
+        }
+
+        .bottom-width {
+            min-width: 625px;
+        }
+
+        .height650 {
+            height: 550px;
+        }
+
+        .height200 {
+            height: 300px;
+        }
+
+        .height100 {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .width100 {
+            width: 100%;
+        }
+
+        .flex-grow-1 {
+            min-width: 950px;
+        }
+
+        .bg-box {
+            background-color: #273147;
+        }
+
+
+        .nav-item .nav-link {
+            color: #aaa;
+        }
+
+        .nav-item .nav-link.active {
+            color: #f00;
+            border-radius: 0px;
+            /* background-color: #273147; */
+            background: hsla(0, 100%, 50%, 0);
+            border-bottom: 1.5px solid #f00;
+        }
+
+        .tab-content {
+            color: #fff;
+        }
+
+        .page-table {
+            width: 100%;
+        }
+
+        .bd-01 {
+            border: 1px solid #191f2e;
+        }
+
+        .font-small {
+            font-size: small;
+            padding: 10px;
+        }
+
+        .shishichengjiao_buy {
+            color: #dc3545;
+        }
+
+        .shishichengjiao_sell {
+            color: #28a745;
+        }
+
+        @keyframes donghua-red {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #ff000060;
+            }
+        }
+
+        @-webkit-keyframes donghua-red {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #ff000060;
+            }
+        }
+
+        @keyframes donghua-green {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #00ff0060;
+            }
+        }
+
+        @-webkit-keyframes donghua-green {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #00ff0060;
+            }
+        }
+
+        .donghuaRed {
+            animation: donghua-red 1s;
+            -moz-animation: donghua-red 1s;
+            -webkit-animation: donghua-red 1s;
+            -o-animation: donghua-red 1s;
+        }
+
+        .donghuaGreen {
+            animation: donghua-green 1s;
+            -moz-animation: donghua-green 1s;
+            -webkit-animation: donghua-green 1s;
+            -o-animation: donghua-green 1s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+
+        <div class="d-flex width100">
+            {{include './_menu.html'}}
+        </div>
+
+        <div class="bd-01 d-flex height650">
+
+            <div class="bg-box p-2 left-width height100">
+
+                <ul class="bg-box nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home1" role="tab"
+                            aria-controls="pills-home" aria-selected="true">USDT</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <!-- <div class="pre-scrollable tab-pane fade show active" id="pills-home1" role="tabpanel" aria-labelledby="pills-home-tab"> -->
+                    <table class="font-small page-table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col-4 text-left">Currency</th>
+                                <th scope="col-4 text-right">Last Price</th>
+                                <th scope="col-4 text-right">Change</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-small" style="overflow:scroll;">
+                            <tr :id="item.node.id" v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:40px;cursor: pointer;">
+                                <td class="col-4 text-left">{[item.node.symbol]}</td>
+                                <td class="col-4 text-right">{[item.node.priceUsd]}</td>
+                                <td class="col-4 text-right">
+                                    <span v-if="item.node.changePercent24Hr>0" class="text-success">{[item.node.changePercent24Hr]}</span>
+                                    <span v-if="item.node.changePercent24Hr<0" class="text-danger">{[item.node.changePercent24Hr]}</span>
+                                    <span v-if="item.node.changePercent24Hr==0">{[item.node.changePercent24Hr]}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- </div> -->
+                </div>
+
+            </div>
+
+            <div class="flex-grow-1 height100">
+                <div id="paint_chart" style="width:100%;height:100%;overflow:hidden;margin: 0 auto;">
+                    <iframe style="border-style: none;" border="0" width="100%" height="100%" id="market_chart" :src="iframeUrl"></iframe>
+                </div>
+            </div>
+
+            <div class="p-2 bg-box right-width height100" style="color: white;">
+
+                <div>{{lang.list[defLang].page.lastest}} {[newPrice]} {[symbol1]}/USDT</div>
+                <hr>
+                <div>
+
+                    <table class="font-small page-table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">　</th>
+                                <th scope="col">{{lang.list[defLang].page.price}}</th>
+                                <th scope="col">{{lang.list[defLang].page.amount}}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-small" style="overflow:scroll;">
+                            <tr v-for="item,index in market.sell">
+                                <td class="text-danger">{{lang.list[defLang].page.sell}}{[9-index]}</td>
+                                <td>{[item.price]}</td>
+                                <td>{[item.amount]}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="font-small page-table table-hover">
+                        <hr>
+                        <tbody class="font-small" style="overflow:scroll;">
+                            <tr v-for="item,index in market.buy">
+                                <td class="text-success">{{lang.list[defLang].page.buy}}{[index+1]}</td>
+                                <td>{[item.price]}</td>
+                                <td>{[item.amount]}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="d-flex height200">
+
+            <div class="bd-01 bg-box p-2 flex-grow-1 height100">
+                <ul class="bg-box nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="shishichengjiao-tab" data-toggle="pill" href="#shishichengjiao"
+                            role="tab" aria-controls="shishichengjiao" aria-selected="true">{{lang.list[defLang].page.real_time_trade}}</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="dangqianweituo-tab" data-toggle="pill" href="#dangqianweituo" role="tab"
+                            aria-controls="dangqianweituo" aria-selected="false">{{lang.list[defLang].page.deleaget}}</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="lishiweituo-tab" data-toggle="pill" href="#lishiweituo" role="tab"
+                            aria-controls="lishiweituo" aria-selected="false">{{lang.list[defLang].page.history_deleaget}}</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="chengjiaojilu-tab" data-toggle="pill" href="#chengjiaojilu" role="tab"
+                            aria-controls="chengjiaojilu" aria-selected="false">{{lang.list[defLang].page.trade_record}}</a>
+                    </li>
+                </ul>
+
+
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="pre-scrollable tab-pane fade show active" id="shishichengjiao" role="tabpanel"
+                        aria-labelledby="shishichengjiao-tab">
+                        <table class="font-small page-table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">{{lang.list[defLang].page.time}}</th>
+                                    <th scope="col">{{lang.list[defLang].page.price}}(USDT)</th>
+                                    <th scope="col">{{lang.list[defLang].page.amount}}({[symbol1]})</th>
+                                </tr>
+                            </thead>
+                            <tbody class="font-small" style="overflow:scroll;">
+                                <tr v-for="item in this.shishichengjiao">
+                                    <td>{[item.ts]}</td>
+                                    <td :class="'shishichengjiao_'+item.direction">{[item.price]}</td>
+                                    <td>{[item.amount]}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="dangqianweituo" role="tabpanel" aria-labelledby="dangqianweituo-tab">{{lang.list[defLang].page.nothing}} {{lang.list[defLang].page.deleaget}}</div>
+                    <div class="tab-pane fade" id="lishiweituo" role="tabpanel" aria-labelledby="lishiweituo-tab">{{lang.list[defLang].page.nothing}} {{lang.list[defLang].page.history_deleaget}}</div>
+                    <div class="tab-pane fade" id="chengjiaojilu" role="tabpanel" aria-labelledby="chengjiaojilu-tab">{{lang.list[defLang].page.nothing}} {{lang.list[defLang].page.trade_record}}</div>
+                </div>
+            </div>
+
+            <div class="bd-01 p-2 bottom-width height100">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home2" role="tab"
+                            aria-controls="pills-home" aria-selected="true">{{lang.list[defLang].page.market_deal}}</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="pre-scrollable tab-pane fade show active" id="pills-home2" role="tabpanel"
+                        aria-labelledby="pills-home-tab">
+
+
+                        <div class="d-flex flex-row">
+                            <div class="col-sm-6">
+                                <div>{{lang.list[defLang].page.available}}：0.000000 USDT</div>
+                                <hr>
+                                <div>
+                                    <div class="form-group row">
+                                        <label for="mairuJia" class="col-sm-3 col-form-label"
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.buy_price}}</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="mairuJia">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="mairuJia" class="col-sm-3 col-form-label"
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.buy_amount}}</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="mairuJia">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-success btn-block">{{lang.list[defLang].page.buy}} {[symbol1]}</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div>{{lang.list[defLang].page.available}}：0.000000 {[symbol1]}</div>
+                                <hr>
+                                <div>
+                                    <div class="form-group row">
+                                        <label for="mairuJia" class="col-sm-3 col-form-label"
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.sell_price}}</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="mairuJia">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="mairuJia" class="col-sm-3 col-form-label"
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.sell_amount}}</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="mairuJia">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-danger btn-block">{{lang.list[defLang].page.sell}} {[symbol1]}</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                iframeUrl: '',
+                symbol: '',
+                symbol1: '',
+                statup: {
+                    symbol: ''
+                },
+                list: [],
+                shishichengjiao: [],
+                newPrice: 0,
+                market: {
+                    buy: [],
+                    sell: [],
+                }
+            },
+            methods: {
+                onClickGo(symbol) {
+                    let url = '/market/?symbol=' + symbol.toLocaleLowerCase() + 'usdt'
+                    document.location = url
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                getQueryVariable(variable) {
+                    var query = window.location.search.substring(1);
+                    var vars = query.split("&");
+                    for (var i = 0; i < vars.length; i++) {
+                        var pair = vars[i].split("=");
+                        if (pair[0] == variable) { return pair[1]; }
+                    }
+                    return (false);
+                },
+                round(num, intLen = 2, dotLaterLen = 6) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return `${s}.${zl}`
+                },
+                lessen(num, min, len) {
+                    let n = num / min
+                    return this.round(n, len)
+                },
+                coinList(data) {
+                    let _t = this
+                    let a = data
+                    a.forEach(function (item) {
+                        item.node = {}
+                        item.node.id = item.name.toLocaleLowerCase()
+                        item.node.name = item.name
+                        item.node.symbol = item.symbol
+                        item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
+                        item.node.priceUsd = _t.round(item.priceUsd, 1)
+                        item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
+                        item.node.supply = _t.round(item.supply, 6, 2)
+                        item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
+                        item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 1, 2)
+                    })
+                    let ptb = {
+                        node: {
+                            id: _t.statup.name.toLocaleLowerCase(),
+                            name: _t.statup.name,
+                            symbol: _t.statup.symbol,
+                            logo: _t.statup.icon,
+                            priceUsd: _t.round(0, 1),
+                            marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
+                            supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
+                            volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
+                            changePercent24Hr: _t.round(0, 1, 2),
+                            rank: this.statup.sort,
+                        }
+                    }
+                    if (this.statup.sort == 0 || this.statup.sort > a.length) {
+                        a.push(ptb)
+                    } else {
+                        a.splice(this.statup.sort - 1, 0, ptb)
+                    }
+                    this.list = a
+                },
+                initWS() {
+                    let ws = new WebSocket('{{lang.ws}}/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 60000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
+                        this.list.forEach(function (item) {
+                            let key = item.node.id
+                            if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
+                                let v = res.platform.price
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 1, 4)
+                                item.node.changePercent24Hr = _t.round(res.platform.price_percent * res.platform.ts_percent, 1, 2)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
+
+                                if (_t.symbol == _t.statup.name.toLocaleLowerCase() + 'usdt') {
+                                    _t.newPrice = _t.round(v, 2, 4)
+                                    window.postMessage({ data: _t.buySell(v) }, '/');
+                                }
+                            }
+                            let v = res.cache[key]
+                            if (v) {
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 1, 4)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
+                            }
+                        })
+                    }
+                },
+                buySell(price) {
+                    let len = 1 + Math.floor(Math.random() * 4)
+                    let a = []
+                    for (let i = 0; i < len; i++) {
+                        let ts = new Date().getTime()
+                        let item = {
+                            id: ts,
+                            amount: Math.random() * 99999,
+                            price: price + price / 100 * Math.random(),
+                            direction: Math.random() * 5 > 1 ? 'buy' : 'sell',
+                            tradeId: ts,
+                            ts: ts,
+                        }
+                        a.push(item)
+                    }
+                    return {
+                        ts: '',
+                        ch: "market.ethusdt.trade.detail",
+                        tick: { data: a },
+                    }
+
+                },
+                getList() {
+                    this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                        this.coinList(data.data.value)
+                        this.initWS()
+                    })
+                },
+                init() {
+                    let _t = this
+                    this.get('/api/startup', {}, (data) => {
+                        this.statup = data.data.currency
+                        this.getList()
+                    })
+
+                    this.symbol = this.getQueryVariable('symbol')
+                    this.symbol1 = this.symbol.substring(0, this.symbol.length - 4).toUpperCase()
+                    this.iframeUrl = '/KLineChart/index.html?symbol=' + this.symbol
+
+                    window.addEventListener('message', (e) => {
+                        var data = e.data;
+                        if (data.d) {
+                            this.newPrice = data.d.close
+                            return
+                        }
+
+                        if (!data.data) {
+                            console.log(data)
+                            return
+                        }
+
+                        let a = data.data.tick.data
+                        a.forEach(function (item) {
+                            item.ts = moment(item.ts).format('YYYY-MM-D HH:mm:ss')
+                            item.price = _t.round(item.price, 2, 4)
+                            item.amount = _t.round(item.amount, 2)
+                        })
+                        for (let i = 0; i < a.length; i++) {
+                            let item = a[i]
+                            if (this.shishichengjiao.length > 10) {
+                                this.shishichengjiao.unshift(item)
+                                this.shishichengjiao.pop()
+                            } else {
+                                this.shishichengjiao.push(item)
+                            }
+
+                            if (item.direction == 'sell') {
+                                this.market.sell.unshift(item)
+                                if (this.market.sell.length >= 10) {
+                                    this.market.sell.pop()
+                                }
+                                this.market.sell.sort()
+                            } else {
+                                this.market.buy.unshift(item)
+                                if (this.market.buy.length > 10) {
+                                    this.market.buy.pop()
+                                }
+                                this.market.buy.sort()
+                            }
+                        }
+                    }, false);
+                }
+            },
+            mounted() {
+                this.init()
+            }
+        });
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">人工上分</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        人工上分
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">上分表单</h2>
+
+                        <form class="form-horizontal">
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"><span style="color:red;">(必填)</span>要修改的帐号</label>
+                                <div class="col-md-10">
+                                    <select @change="onChangeSelected(form)" v-model="form.id" class="form-control" id="type" name="type">
+                                        <option disabled value="0">请选择</option>
+                                        <option v-for="option in user_list" :value="option.id">帐号：{[option.account]},电话：{[option.mobile]}, 邮箱：{[option.email]}, 帐号类型：{[option.value]}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"><span style="color:red;">(必填)</span>上分或下分</label>
+                                <div class="col-md-10">
+                                    <select v-model="form.action" class="form-control">
+                                        <option disabled value="">请选择</option>
+                                        <option v-for="option in actions" :value="option.value">{[option.label]}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">USDT-TRC20</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.usdt_trc20" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.usdt_trc20_wallet_address]}　　余额：{[curr_user_item.usdt_trc20]}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">USDT-ERC20</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.usdt_erc20" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.usdt_erc20_wallet_address]}　　余额：{[curr_user_item.usdt_erc20]}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">ETH</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.eth" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.eth_wallet_address]}　　余额：{[curr_user_item.eth]}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">BTC</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.btc" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.btc_wallet_address]}　　余额：{[curr_user_item.btc]}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">(平台币){[this.platform_currency.currency.symbol]}</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.platform_currency" class="form-control" value="" type="number" min="0">
+                                    时价：{[form.platform_currency_price]} ≈ {[form.platform_currency_price*form.platform_currency]}　　余额：{[curr_user_item.platform_currency_buy_total]}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"><span style="color:red;">(必填)</span>备注</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.notes" class="form-control" value="" type="text" maxlength="200">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"></label>
+                                <div class="col-md-10">
+                                    <button @click="onClickSubmit(form)" type="button"
+                                        class="btn btn-primary col-md-1">Submit</button>
+                                </div>
+                            </div>
+
+                        </form>
+
+
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                user_list: [],
+
+                actions: [
+                    { label: '上分', value: 'add' },
+                    { label: '下分', value: 'subtract' },
+                ],
+
+                curr_user_item: {
+                    usdt_trc20: null,
+                    usdt_erc20: null,
+                    eth: null,
+                    btc: null,
+                    platform_currency_buy_total: null,
+                },
+
+                form: {
+                    id: 0,
+                    action: '',
+                    usdt_trc20: 0,
+                    usdt_erc20: 0,
+                    eth: 0,
+                    btc: 0,
+                    usdt_trc20_wallet_address: '',
+                    usdt_erc20_wallet_address: '',
+                    eth_wallet_address: '',
+                    btc_wallet_address: '',
+                    platform_currency: 0,
+                    platform_currency_price: 0,
+                    notes: '',
+                },
+
+                platform_currency: {
+                    currency: {
+                        symbol: ''
+                    }
+                },
+            },
+            methods: {
+                onChangeSelected(form) {
+                    if (form.id <= 0) {
+                        return
+                    }
+                    let userItem = this.curr_user_item = this.getUserItem(form.id)
+                    form.btc_wallet_address = userItem.wallet[0].wallet_address
+                    form.eth_wallet_address = userItem.wallet[1].wallet_address
+                    form.usdt_erc20_wallet_address = userItem.wallet[2].wallet_address
+                    form.usdt_trc20_wallet_address = userItem.wallet[3].wallet_address
+                },
+                onClickSubmit(form) {
+                    if (form.id <= 0) {
+                        alert('请选择一个用户')
+                        return
+                    }
+                    if (form.action.length <= 0) {
+                        alert('请选择要 上分 或 下分？')
+                        return
+                    }
+                    if (Number(form.usdt_trc20) <= 0 && Number(form.usdt_erc20) <= 0 && Number(form.eth) <= 0 && Number(form.btc) <= 0 && Number(form.platform_currency) <= 0) {
+                        alert('请填写正确的金额或数量，负数无效！')
+                        return
+                    }
+                    if (form.notes.trim().length <= 0) {
+                        alert('请填写备注项，上分下分的原因是什么？')
+                        return
+                    }
+                    this.loading = true
+                    this.post('/admin/api/manual-add-score', form, (data) => {
+                        this.loading = false
+                        if (data.flag != 'ok') {
+                            swal("修改完成！", "数据已修改完成！", "error")
+                            return
+                        }
+                        this.resetFrom(form)
+                        swal("修改完成！", "数据已修改完成！", "success")
+                    })
+                },
+
+                getUserItem(id) {
+                    for (let i = 0; i < this.user_list.length; i++) {
+                        let item = this.user_list[i]
+                        if (item.id == id) {
+                            return item
+                        }
+                    }
+                    return null
+                },
+                resetFrom(form) {
+                    form.id = 0
+                    form.action = ''
+                    form.usdt_trc20 = 0
+                    form.usdt_erc20 = 0
+                    form.eth = 0
+                    form.btc = 0
+                    form.usdt_trc20_wallet_address = '-'
+                    form.usdt_erc20_wallet_address = '-'
+                    form.eth_wallet_address = '-'
+                    form.btc_wallet_address = '-'
+                    form.platform_currency = 0
+                },
+
+                initWS() {
+                    let ws = new WebSocket('{{lang.ws}}/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 60000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
+                        this.form.platform_currency_price = res.platform.price
+                        // ws.close()
+                    }
+                },
+
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                init() {
+                    this.get('/admin/api/user-list', { limit: 999 }, (data) => {
+                        let a = data.data.list
+                        this.user_list = a
+                        this.onChangeSelected(this.form)
+                        this.initWS()
+                    })
+
+                    this.get('/api/startup', {}, (data) => {
+                        this.platform_currency = data.data
+                        console.log(this.platform_currency)
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

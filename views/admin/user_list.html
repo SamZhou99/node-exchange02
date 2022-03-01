@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/admin-assets/plugins/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL STYLES -->
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">用户列表</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        所有用户
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">用户列表</h2>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>帐号</th>
+                                        <th>用户类型/认证</th>
+                                        <th>备注</th>
+                                        <th>邀请人(上级)</th>
+                                        <th>平台币({[this.platform_currency.symbol]})</th>
+                                        <th>币种 / 地址 / 数量</th>
+                                        <th>注册时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in this.list">
+                                        <td>{[item.id]}</td>
+                                        <td><span v-html="item.self_name"></span></td>
+                                        <td>
+                                            <!-- <a href="#" :id="'selectType'+item.id" :data-item="item.id" data-type="select" data-pk="1" data-value="" data-title="选择用户类型" class="editable editable-click" style="color: gray;">{[item.value]}</a> -->
+                                            {[item.value]}
+                                            <p>
+                                            <div v-if="item.auth">
+                                                <a v-if="item.auth.status==1" :href="'/admin/user-auth/'+item.id" class="text-danger bg-warning"><b>待审核</b></a>
+                                                <a v-if="item.auth.status==2" :href="'/admin/user-auth/'+item.id" class="text-danger">未通过</a>
+                                                <a v-if="item.auth.status==3" :href="'/admin/user-auth/'+item.id" class="text-primary">通过认证</a>
+                                            </div>
+                                            <div v-else>
+                                                <span>未认证</span>
+                                            </div>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <!-- <a :href="'/reg?invite='+item.invite.code" target="_blank">{[item.invite.code]}</a> -->
+                                            {[item.notes]}
+                                        </td>
+                                        <td><span v-html="item.parent ? item.parent_name : '无'"></span></td>
+
+
+                                        <td>
+                                            地址：-
+                                            <br>
+                                            数量：<span v-if="item.platform_currency_buy_total > 0" class="badge badge-success" style="background-color:#6fa30f;">{[item.platform_currency_buy_total]}</span>
+                                            <br>
+                                            <a @click="onClickShowBuyLog(item)" href="javascript:void(0);">查看详情</a>
+                                            <div v-if="item.buy_log_show">
+                                                <table>
+                                                    <tr>
+                                                        <th width="100px">数量</th>
+                                                        <th width="200px">备注</th>
+                                                        <th width="200px">日期</th>
+                                                    </tr>
+                                                    <tr v-for="log_item in item.platform_currency_buy_log">
+                                                        <td>{[log_item.target_amount]}</td>
+                                                        <td>
+                                                            <span v-if="log_item.notes==''">项目首发</span>
+                                                            <span v-else="">{[log_item.notes]}</span>
+                                                        </td>
+                                                        <td>{[dateFormat(log_item.create_datetime)]}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </td>
+                                        <td width="600">
+                                            <table style="padding:5px; line-height:26px;">
+                                                <tr>
+                                                    <td width="100">USDT-TRC20</td>
+                                                    <td width="350"><a :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[3].wallet_address" target="_blank">{[item.wallet[3].wallet_address]}</a></td>
+                                                    <td width="100"><span v-if="item.usdt_trc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_trc20]}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>USDT-ERC20</td>
+                                                    <td><a :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a></td>
+                                                    <td><span v-if="item.usdt_erc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_erc20]}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>ETH</td>
+                                                    <td><a :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a></td>
+                                                    <td><span v-if="item.eth > 0" class="badge badge-success" style="background-color:#c02424;">{[item.eth]}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>BTC</td>
+                                                    <td><a :href="'https://www.btc.com/btc/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a></td>
+                                                    <td><span v-if="item.btc > 0" class="badge badge-success" style="background-color:#c02424;">{[item.btc]}</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+
+                                        <td>
+                                            {[dateFormat(item.create_datetime)]}
+                                        </td>
+                                        <td>
+                                            <span v-if="!!item.status">
+                                                <button @click="onClickStatus(item)" class="btn btn-success"> <i class="fa fa-check"></i> 可用</button>
+                                            </span>
+                                            <span v-else>
+                                                <button @click="onClickStatus(item)" class="btn btn-danger"> <i class="fa fa-remove"></i> 禁用</button>
+                                            </span>
+                                            <button @click="onClickEdit(item)" class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
+                                            <button @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn"><i class="fa fa-refresh"></i> 更新充值</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div id="page"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+            <!-- Modal -->
+            <div class="modal fade" id="modalId" tabindex="-1" role="dialog" aria-labelledby="modalIdTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="color: black">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <div class="form-row">
+                                <h5 id="modalIdTitle" class="col-md-6 modal-title">编辑用户数据 <span style="color:#c02424;">{[form.email]}</span> </h5>
+                                <div class="col-md-6">
+                                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">备注信息</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" v-model="form.notes" type="text">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button @click="onClickEditSubmit()" :disabled="this.loading" type="button" class="btn btn-primary">确认修改</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/admin-assets/plugins/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+    <!-- <script src="/admin-assets/pages/bootstrap-editable-custom.js"></script> -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                list: [],
+                refreshButtonStatus: false,
+                categoryList: [],
+                platform_currency: {},
+                form: {
+                    user_id: null,
+                    email: null,
+                    notes: null,
+                    usdt_trc20: null,
+                    usdt_erc20: null,
+                    eth: null,
+                    btc: null,
+                },
+                currItem: null,
+            },
+            methods: {
+                onClickShowBuyLog(item) {
+                    item.buy_log_show = !item.buy_log_show
+                },
+                onClickEditSubmit() {
+                    // console.log(this.form, this.currItem)
+                    if (this.form.notes != this.currItem.notes) {
+                        this.currItem.notes = this.form.notes
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'notes', value: this.form.notes }, (data) => console.log)
+                    }
+                    if (this.form.usdt_trc20 != this.currItem.usdt_trc20) {
+                        this.currItem.usdt_trc20 = this.form.usdt_trc20
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'usdt_trc20', value: this.form.usdt_trc20 }, (data) => console.log)
+                    }
+                    if (this.form.usdt_erc20 != this.currItem.usdt_erc20) {
+                        this.currItem.usdt_erc20 = this.form.usdt_erc20
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'usdt_erc20', value: this.form.usdt_erc20 }, (data) => console.log)
+                    }
+                    if (this.form.eth != this.currItem.eth) {
+                        this.currItem.eth = this.form.eth
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'eth', value: this.form.eth }, (data) => console.log)
+                    }
+                    if (this.form.btc != this.currItem.btc) {
+                        this.currItem.btc = this.form.btc
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'btc', value: this.form.btc }, (data) => console.log)
+                    }
+                },
+                onClickEdit(item) {
+                    this.currItem = item
+                    this.form.user_id = item.id;
+                    this.form.email = item.email;
+                    this.form.notes = item.notes;
+                    this.form.usdt_trc20 = item.usdt_trc20;
+                    this.form.usdt_erc20 = item.usdt_erc20;
+                    this.form.eth = item.eth;
+                    this.form.btc = item.btc;
+                    $('#modalId').modal("show");
+                },
+                onClickStatus(item) {
+                    item.status = item.status == 1 ? 0 : 1
+                    console.log('item.status ===============')
+                    console.log(item.status)
+                    this.get('/admin/api/user/update-one-field', { id: item.id, field: 'status', value: item.status })
+                },
+                onRefreshWalletAddress(wallet_address) {
+                    this.refreshButtonStatus = true
+                    this.get('/api/wallet-address/' + wallet_address, {}, (data) => {
+                        this.init()
+                        this.refreshButtonStatus = false
+                    })
+                },
+                setEditable() {
+                    let t = this
+                    for (let i = 0; i < this.list.length; i++) {
+                        let userItem = this.list[i]
+                        $('#selectType' + userItem.id).editable({
+                            // mode: 'inline',
+                            prepend: userItem.value,
+                            source: this.categoryList.concat(),
+                            display: function (value, sourceData) {
+                                let user_id = this.attributes['data-item']['value']
+                                let type_id = value
+                                if (type_id) {
+                                    t.setUserType(user_id, type_id)
+                                }
+                                var colors = { "": "gray", 1: "green", 2: "blue" }
+                                let elem = $.grep(sourceData, function (o) { return o.value == value; });
+                                if (elem.length) {
+                                    $(this).text(elem[0].text).css("color", colors[value]);
+                                } else {
+                                    $(this).empty();
+                                }
+                            }
+                        });
+                    }
+                },
+                setUserType(user_id, type_id) {
+                    this.get('/admin/api/user/update-one-field', { id: user_id, field: 'type', value: type_id }, (data) => {
+                        // 
+                    })
+                },
+                getcCategory() {
+                    this.get('/admin/api/user-group-category', {}, (data) => {
+                        let a = data.data.list
+                        a.forEach(function (item) {
+                            item.text = item.value
+                            item.value = item.id
+                        })
+                        this.categoryList = a
+                        this.setEditable()
+
+
+                        jQuery('[data-toggle="popover"], .js-popover').popover({
+                            container: 'body',
+                            animation: true,
+                            trigger: 'hover'
+                        });
+                    })
+                },
+                accountName(data) {
+                    let str = ''
+                    if (!data) {
+                        return str
+                    }
+                    if (data.account) {
+                        str += '帐号：' + data.account
+                    }
+                    if (data.mobile) {
+                        str += '<br>手机：' + data.mobile
+                    }
+                    if (data.email) {
+                        str += '<br>邮箱：' + data.email
+                    }
+                    return str
+                },
+                dateFormat(ts) {
+                    return moment(ts).format('YYYY/MM/DD HH:mm:ss')
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                init() {
+                    let t = this
+
+                    this.get('/admin/api/user-group-category', {}, (data) => {
+                        let a = data.data.list
+                        a.forEach(function (item) {
+                            item.text = item.value
+                            item.value = item.id
+                        })
+                        this.categoryList = a
+
+                        $('#page').pagination({
+                            dataSource: '/admin/api/user-list',
+                            locator: 'data.list',
+                            pageSize: 10,
+                            alias: {
+                                pageNumber: 'page',
+                                pageSize: 'limit'
+                            },
+                            totalNumberLocator: function (response) {
+                                return response.data.page.total;
+                            },
+                            ajax: {
+                                beforeSend: function () {
+                                    console.log('正在加载...')
+                                }
+                            },
+                            callback: (data, pagination) => {
+                                let a = data
+                                a.forEach(function (item) {
+                                    item.buy_log_show = false;
+                                    item.self_name = t.accountName(item)
+                                    item.parent_name = t.accountName(item.parent)
+                                })
+                                this.list = a
+                            }
+                        })
+
+                    })
+
+                    this.get('/api/startup', {}, (data) => {
+                        this.platform_currency = data.data.currency
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>
