@@ -674,10 +674,12 @@ let service = {
                 let item = list[i]
                 if (item.hash) {
                     let bindRes = await db.Query('SELECT bind_user_id FROM system_wallet WHERE wallet_address=?', [item.to_address])
-                    let bind_user_id = bindRes[0].bind_user_id
-                    if (bind_user_id > 0) {
-                        let userRes = await db.Query('SELECT id,account,email,mobile FROM user WHERE id=?', [bind_user_id])
-                        item.user = userRes[0]
+                    if (bindRes.length > 0) {
+                        let bind_user_id = bindRes[0].bind_user_id
+                        if (bind_user_id > 0) {
+                            let userRes = await db.Query('SELECT id,account,email,mobile FROM user WHERE id=?', [bind_user_id])
+                            item.user = userRes[0]
+                        }
                     }
                 } else {
                     let userRes = await db.Query('SELECT id,account,email,mobile FROM user WHERE id=?', [item.user_id])
