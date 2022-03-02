@@ -1,3 +1,4 @@
+const fs = require('fs')
 const utils99 = require('node-utils99')
 const { init } = require('node-utils99/mysql-sync-cache')
 const tools = require('../lib/tools.js')
@@ -491,6 +492,21 @@ let __this = {
                     const res = await service.withdraw.updateStatus(id, status, failed_reason)
                     ctx.body = { flag: 'ok' }
                 }
+            },
+
+            // 公告
+            notice: {
+                path: __dirname + '/../../views/notice.html',
+                async get(ctx) {
+                    const notice = fs.readFileSync(__this.page.api.notice.path)
+                    ctx.body = { flag: 'ok', data: notice.toString() }
+                },
+                async post(ctx) {
+                    const body = ctx.request.body
+                    const notice = body.notice
+                    fs.writeFileSync(__this.page.api.notice.path, notice)
+                    ctx.body = { flag: 'ok' }
+                }
             }
         },
 
@@ -588,6 +604,10 @@ let __this = {
             // 浏览记录
             async pageview(ctx) {
                 await ctx.render('admin/pageview', ctx.data)
+            },
+            // 通告
+            async notice(ctx) {
+                await ctx.render('admin/notice', ctx.data)
             },
             // 市场 添加货币
             async marketCoin(ctx) {

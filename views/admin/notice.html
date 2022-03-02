@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">通告</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        通告
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 class="header-title">公告</h2>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button @click="onClickClear()" class="btn btn-default"><i class="fa fa-trash-o"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <div class="col-md-12">
+                                <div><label for="story">编辑公告内容：</label></div>
+                                <div><textarea v-model="notice" id="story" name="story" rows="5" style="width:100%" placeholder="请在这里输入公告内容。"></textarea></div>
+                                <div><button @click="onClickSubmit()" class="btn btn-primary">提交</button></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                url: '/admin/api/notice',
+                notice: '',
+            },
+            methods: {
+                onClickSubmit() {
+                    if (this.notice != null && this.notice.length > 0) {
+                        this.post(this.url, { notice: this.notice }, (res) => {
+                            alert('保存成功')
+                        })
+                    }
+                },
+
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                init() {
+                    this.get(this.url, {}, (res) => {
+                        if (res.flag == 'ok') {
+                            // console.log(JSON.parse(res.data))
+                            this.notice = res.data
+                            // JSON.parse(res.data)
+                        }
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+
+    </script>
+</body>
+
+</html>

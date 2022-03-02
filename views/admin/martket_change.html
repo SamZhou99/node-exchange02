@@ -330,6 +330,7 @@
                         delete item.timestamp
                     })
                     let form = {
+                        symbol: this.currency.symbol.toLocaleLowerCase() + 'usdt',
                         chartData: JSON.stringify(a.reverse())
                     }
                     this.post('/admin/api/kline', form, (data) => {

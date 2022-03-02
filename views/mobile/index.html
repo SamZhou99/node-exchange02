@@ -49,7 +49,7 @@
                 <tr @click="onClickGoMarket(item)" v-for="item in this.list" :id="item.node.id">
                     <td>
                         <div uk-grid>
-                            <div><img :src="item.node.logo" :alt="item.node.name" width="36px"></div>
+                            <div><a :href="item.node.url"><img :src="item.node.logo" :alt="item.node.name" width="36px"></a></div>
                             <div>
                                 <div class="overflow-text">{[item.node.name]}</div>
                                 <div>{[item.node.symbol]}</div>
@@ -162,6 +162,8 @@
                             item.node.supply = _t.round(item.supply, 6, 2)
                             item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
                             item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 1, 2)
+
+                            item.node.url = `/market/?symbol=${item.symbol.toLocaleLowerCase()}usdt`
                         })
 
                         let ptb = {
@@ -176,6 +178,7 @@
                                 volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
                                 changePercent24Hr: _t.round(0, 1, 2),
                                 rank: this.statup.sort,
+                                url: `/market/?symbol=${_t.statup.symbol.toLocaleLowerCase()}usdt`,
                             }
                         }
                         if (this.statup.sort == 0 || this.statup.sort > a.length) {

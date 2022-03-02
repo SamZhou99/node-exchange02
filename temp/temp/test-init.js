@@ -37,13 +37,22 @@ async function initUserCategory() {
     }
 }
 
-async function initUser() {
-    await testUser()
+async function importCSV() {
+    let results = []
+    for (let i = 0; i < csvFileArr.length; i++) {
+        let itemFilePath = csvFileArr[i]
+        let csvFile = path.resolve(__dirname, itemFilePath)
+        let res = await server.wallet.importCSV(csvFile)
+        results.push(res)
+    }
+    return results
 }
 
-async function testUser() {
+
+async function initUser() {
     let code = await server.inviteCode.getOnlyInviteCode()
-    await server.inviteCode.bindInviteCode(1, code)
+    let user_id = 1
+    await server.inviteCode.bindInviteCode(user_id, code)
 
     // let adminPassword = server.inviteCode.createRandomCode(12)
     // console.log('管理密码', adminPassword)
@@ -68,10 +77,10 @@ async function testUser() {
     let userType = await db.Query('UPDATE user SET type=1 WHERE id=1')
     // 关联四个钱包，包括管理员
     let testData = [
-        { id: 1, wallet_address: 'TAg8tdcJttbD9AXAEzcQjdHM99s1SAKJuN' },
-        { id: 2, wallet_address: 'TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn' },
-        { id: 3, wallet_address: 'TWaTBz3rScoR1GWxC631XMzmPzc5zrzGUh' },
-        { id: 4, wallet_address: 'TNgDLrLQodteGyJiHfnTdDZfFv5f386yTU' },
+        { id: 1, wallet_address: 'TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn' },
+        // { id: 2, wallet_address: 'TAg8tdcJttbD9AXAEzcQjdHM99s1SAKJuN' },
+        // { id: 3, wallet_address: 'TWaTBz3rScoR1GWxC631XMzmPzc5zrzGUh' },
+        // { id: 4, wallet_address: 'TNgDLrLQodteGyJiHfnTdDZfFv5f386yTU' },
     ]
     for (let i = 0; i < testData.length; i++) {
         let item = testData[i]
@@ -82,19 +91,8 @@ async function testUser() {
     }
 }
 
-async function importCSV() {
-    let results = []
-    for (let i = 0; i < csvFileArr.length; i++) {
-        let itemFilePath = csvFileArr[i]
-        let csvFile = path.resolve(__dirname, itemFilePath)
-        let res = await server.wallet.importCSV(csvFile)
-        results.push(res)
-    }
-    return results
-}
-
 async function initPlatformCurrency() {
-    await db.Query("INSERT INTO `platform_currency` VALUES ('1', '/images/symbol.png', 'LETH', 'Leth', '100000000', '0', '4', '0.03400000', '20.00000000', '0.00000000', '0.00000000', '2021-12-01 00:00:00', '2022-12-01 00:00:00', '2021-12-19 18:43:25', '2021-12-19 18:43:28');")
+    await db.Query("INSERT INTO `platform_currency` VALUES ('1', '/images/symbol.png', 'SSVP', 'Ssvp', '100000000', '0', '4', '0.03400000', '20.00000000', '0.00000000', '0.00000000', '2021-12-01 00:00:00', '2022-12-01 00:00:00', '2021-12-19 18:43:25', '2021-12-19 18:43:28');")
 }
 
 async function init() {

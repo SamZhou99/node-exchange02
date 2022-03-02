@@ -55,6 +55,9 @@ router.get('/admin/upload-wallet-address', middleware.checkLogin, middleware.rol
 router.get('/admin/trade-log', middleware.checkLogin, middleware.role, controllers.admin.tradeLog)
 // 浏览记录页面
 router.get('/admin/pageview', middleware.checkLogin, middleware.role, controllers.admin.pageview)
+// 通告
+router.get('/admin/notice', middleware.checkLogin, middleware.role, controllers.admin.notice)
+
 // 行情
 // 添加货币页面
 router.get('/admin/market-coin', middleware.checkLogin, middleware.role, controllers.admin.marketCoin)
@@ -105,6 +108,9 @@ router.post('/admin/api/update-authentication', middleware.checkLogin, middlewar
 router.post('/admin/api/withdraw-update', middleware.checkLogin, middleware.role, controllers.api.withdraw.updateJson)
 // 提币列表
 router.get('/admin/api/withdraw-log', middleware.checkLogin, controllers.api.withdraw.allLogJson)
+// 公告编辑
+router.get('/admin/api/notice', middleware.checkLogin, middleware.role, controllers.api.notice.get)
+router.post('/admin/api/notice', middleware.checkLogin, middleware.role, controllers.api.notice.post)
 // 数据库初始化
 router.get('/admin/api/init', controllers.admin.api.init)
 

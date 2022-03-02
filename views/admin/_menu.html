@@ -54,6 +54,13 @@
                     <li :class="{'active':checkActive(['/admin/pageview'])}"><a href="/admin/pageview"> PageView</a></li>
                 </ul>
             </li>
+
+            <li :class="{'nav-active':checkActive(['/admin/notice'])}" class="menu-list"><a href="#"><i class="fa fa-file-o"></i> <span>通告</span></a>
+                <ul class="sub-menu-list">
+                    <li :class="{'active':checkActive(['/admin/notice'])}"><a href="/admin/notice">公告</a></li>
+                </ul>
+            </li>
+
         </ul>
         <!--End sidebar nav-->
     </div>
