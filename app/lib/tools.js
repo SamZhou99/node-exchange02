@@ -16,7 +16,7 @@ module.exports = {
         if (wallet_address.substr(0, 1) == "T") {
             return common.coin.type.USDT_TRC20
         }
-        if (wallet_address.substr(0, 1) == "1") {
+        if (wallet_address.substr(0, 1) == "1" || wallet_address.substr(0, 1) == "3") {
             return common.coin.type.BTC
         }
         return null
