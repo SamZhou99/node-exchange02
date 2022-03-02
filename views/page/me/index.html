@@ -238,8 +238,8 @@
                             <div class="col-md-6">
                                 <div class="card-body">
                                     <h3 class="card-title">{[currency.symbol]}</h3>
-                                    <p class="card-text"><span class="gray1">{[user.platform_currency_buy_total]} {[currency.symbol]}</span>
-                                        <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,1,8)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                                    <p class="card-text"><span class="gray1">{[round(user.platform_currency_buy_total,1,6)]} {[currency.symbol]}</span>
+                                        <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,1,6)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                                         <span v-if="usd.platform_currency_is_up=='-'" class="red"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                                         <span v-if="usd.platform_currency_is_up==''" class="gray"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                                     </p>
