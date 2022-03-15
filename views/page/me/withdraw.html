@@ -161,7 +161,7 @@
                     { label: 'BTC', key: 'btc', value: '0', charges: '0.0002' },
                     { label: 'ETH', key: 'eth', value: '1', charges: '0.002' },
                     { label: 'USDT-TRC20', key: 'usdt_trc20', value: '2', charges: '1' },
-                    { label: 'USDT-ERC20', key: 'usdt_erc20', value: '3', charges: '1' },
+                    { label: 'USDT-ERC20', key: 'usdt_erc20', value: '3', charges: '25' },
                 ],
 
                 form: {
@@ -191,6 +191,10 @@
                     this.form.type = this.form.coin_type.key
                     this.form.charges = this.form.coin_type.charges
                     console.log(this.form)
+                    if (this.form.apply_amount < this.form.charges) {
+                        tip('The application amount should be greater than the service fee!')
+                        return
+                    }
 
                     if (this.form.apply_amount <= 0 || this.form.real_amount <= 0 || this.form.charges <= 0 || this.form.type == '' || this.form.address == '') {
                         tip('Please fill out the form completely!')
