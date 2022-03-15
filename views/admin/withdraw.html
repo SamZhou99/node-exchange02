@@ -61,9 +61,11 @@
                                 <tr v-for="item,index in this.list">
                                     <td>{[item.id]}</td>
                                     <td>
-                                        {[item.user.account]}<br>
-                                        {[item.user.email]}<br>
-                                        {[item.user.mobile]}
+                                        <div v-if="item.user">
+                                            {[item.user.account]}<br>
+                                            {[item.user.email]}<br>
+                                            {[item.user.mobile]}
+                                        </div>
                                     </td>
                                     <td>{[item.type]}</td>
                                     <td>{[item.address]}</td>
