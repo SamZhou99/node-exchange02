@@ -1,5 +1,6 @@
 const utils99 = require('node-utils99')
 const lang = require('../../config/language.js')
+const common = require('../../config/common.js')
 const service = require('../service/index.js')
 
 /**
@@ -15,6 +16,7 @@ function shareLanguageData(ctx) {
     ctx.data = {}
     ctx.data.lang = lang
     ctx.data.defLang = defLang
+    ctx.data.common = common
     return true
 }
 
