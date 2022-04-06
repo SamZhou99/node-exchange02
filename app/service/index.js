@@ -572,6 +572,13 @@ let service = {
                     results.unqualifiedArr.push(item[0])
                     continue
                 }
+
+                // 去掉地址两边空白
+                if (!item[1]) {
+                    continue
+                }
+                item[1] = item[1].trim()
+
                 // 检查 地址 是否有重复
                 let res = await db.Query('SELECT * FROM system_wallet WHERE wallet_address=? LIMIT 1', [item[1]])
                 if (res.length > 0) {
@@ -621,6 +628,13 @@ let service = {
             }
             for (let i = 0; i < list.length; i++) {
                 let item = list[i]
+
+                // 去掉地址两边空白
+                if (!item) {
+                    continue;
+                }
+                item = item.trim()
+
                 // if (!tools.isNumber(item)) {
                 //     results.unqualified++
                 //     results.unqualifiedArr.push(item)
