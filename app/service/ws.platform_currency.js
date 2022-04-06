@@ -22,18 +22,19 @@ let _t = {
     },
     deffTime() {
         // 旧代码
-        // let d
-        // d = utils99.moment().format('YYYY-MM-DD 00:00:00')
-        // let start_ts = new Date(d).getTime()
-        // let new_ts = new Date().getTime()
-        // d = utils99.moment(start_ts).add(1, 'd')
-        // let end_ts = new Date(d).getTime()
+        let d
+        d = utils99.moment().format('YYYY-MM-DD 00:00:00')
+        let start_ts = new Date(d).getTime()
+        let new_ts = new Date().getTime()
+        d = utils99.moment(start_ts).add(1, 'd')
+        let end_ts = new Date(d).getTime()
 
-        // 新代码
-        let utfOffset = 800
-        let start_ts = new Date(utils99.moment().utcOffset(utfOffset).format('YYYY-MM-DD 00:00:00')).getTime()
-        let new_ts = new Date(utils99.moment().utcOffset(utfOffset).format('YYYY-MM-DD hh:mm:ss')).getTime()
-        let end_ts = new Date(utils99.moment(start_ts).utcOffset(utfOffset).add(1, 'd')).getTime()
+        // // 新代码
+        // let utfOffset = 800
+        // let start_ts = new Date(utils99.moment().utcOffset(utfOffset).format('YYYY-MM-DD 00:00:00')).getTime()
+        // let new_ts = new Date(utils99.moment().utcOffset(utfOffset).format('YYYY-MM-DD hh:mm:ss')).getTime()
+        // let end_ts = new Date(utils99.moment(start_ts).utcOffset(utfOffset).add(1, 'd')).getTime()
+
 
         let deff_ts = Math.round((end_ts - new_ts) / 1000)
         let day_ts = (end_ts - start_ts) / 1000
