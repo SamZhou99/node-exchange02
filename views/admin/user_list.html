@@ -144,7 +144,7 @@
                                                 <button @click="onClickStatus(item)" class="btn btn-danger"> <i class="fa fa-remove"></i> 禁用</button>
                                             </span>
                                             <button @click="onClickEdit(item)" class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
-                                            <button v-if="item.wallet[3].wallet_address != undefined" @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn"><i class="fa fa-refresh"></i> 更新充值</button>
+                                            <button v-if="item.wallet[3] != null" @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn"><i class="fa fa-refresh"></i> 更新充值</button>
                                         </td>
                                     </tr>
                                 </tbody>
