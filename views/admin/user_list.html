@@ -111,22 +111,22 @@
                                             <table style="padding:5px; line-height:26px;">
                                                 <tr>
                                                     <td width="100">USDT-TRC20</td>
-                                                    <td width="350"><a v-if="item.wallet[3].wallet_address != undefined" :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[3].wallet_address" target="_blank">{[item.wallet[3].wallet_address]}</a></td>
+                                                    <td width="350"><a v-if="item.wallet[3] != null" :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[3].wallet_address" target="_blank">{[item.wallet[3].wallet_address]}</a></td>
                                                     <td width="100"><span v-if="item.usdt_trc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_trc20]}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>USDT-ERC20</td>
-                                                    <td><a v-if="item.wallet[2].wallet_address != undefined" :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a></td>
+                                                    <td><a v-if="item.wallet[2] != null" :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a></td>
                                                     <td><span v-if="item.usdt_erc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_erc20]}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>ETH</td>
-                                                    <td><a v-if="item.wallet[1].wallet_address != undefined" :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a></td>
+                                                    <td><a v-if="item.wallet[1] != null" :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a></td>
                                                     <td><span v-if="item.eth > 0" class="badge badge-success" style="background-color:#c02424;">{[item.eth]}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>BTC</td>
-                                                    <td><a v-if="item.wallet[0].wallet_address != undefined" :href="'https://www.btc.com/btc/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a></td>
+                                                    <td><a v-if="item.wallet[0] != null" :href="'https://www.btc.com/btc/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a></td>
                                                     <td><span v-if="item.btc > 0" class="badge badge-success" style="background-color:#c02424;">{[item.btc]}</span></td>
                                                 </tr>
                                             </table>
