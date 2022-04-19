@@ -116,17 +116,17 @@
                                                 </tr>
                                                 <tr>
                                                     <td>USDT-ERC20</td>
-                                                    <td><a v-if="item.wallet[3].wallet_address != undefined" :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a></td>
+                                                    <td><a v-if="item.wallet[2].wallet_address != undefined" :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a></td>
                                                     <td><span v-if="item.usdt_erc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_erc20]}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>ETH</td>
-                                                    <td><a v-if="item.wallet[3].wallet_address != undefined" :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a></td>
+                                                    <td><a v-if="item.wallet[1].wallet_address != undefined" :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a></td>
                                                     <td><span v-if="item.eth > 0" class="badge badge-success" style="background-color:#c02424;">{[item.eth]}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>BTC</td>
-                                                    <td><a v-if="item.wallet[3].wallet_address != undefined" :href="'https://www.btc.com/btc/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a></td>
+                                                    <td><a v-if="item.wallet[0].wallet_address != undefined" :href="'https://www.btc.com/btc/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a></td>
                                                     <td><span v-if="item.btc > 0" class="badge badge-success" style="background-color:#c02424;">{[item.btc]}</span></td>
                                                 </tr>
                                             </table>
