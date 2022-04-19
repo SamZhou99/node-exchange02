@@ -105,7 +105,7 @@ let service = {
          * @returns 一个用户信息/null
          */
         async login(account, password) {
-            let res = await db.Query("SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,usdt_erc20,eth,create_datetime,update_datetime FROM `user` WHERE (account=? OR email=? OR mobile=?) AND `password`=MD5(?) LIMIT 1", [account, account, account, password])
+            let res = await db.Query("SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,usdt_erc20,eth,create_datetime,update_datetime FROM `user` WHERE (account=? OR email=? OR mobile=?) AND `password`=MD5(?) ORDER BY id DESC LIMIT 1", [account, account, account, password])
             return res.length > 0 ? res[0] : null
         },
         /**
@@ -736,7 +736,7 @@ let service = {
             for (let i = 0; i < a.length; i++) {
                 let item = a[i]
                 // BUG 过滤掉 不符合的数据
-                if(item.tokenInfo.tokenAbbr.toLowerCase() != 'usdt'){
+                if (item.tokenInfo.tokenAbbr.toLowerCase() != 'usdt') {
                     continue
                 }
                 let o = {
