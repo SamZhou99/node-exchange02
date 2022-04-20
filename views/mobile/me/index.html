@@ -313,6 +313,7 @@
                 loading: false,
                 readOnly: 'readOnly',
                 wallet_address: '',
+                usdt_trc20_address: '',
                 list: [],
 
                 currency: {},
@@ -336,6 +337,8 @@
                     'usdt_trc20': false,
                     'usdt_erc20': false,
                 },
+
+                temp_setInterval: 0,
             },
             methods: {
                 onClickGo(url) {
@@ -375,6 +378,16 @@
                     }
                     return result
                 },
+                getUserWalletAddress(wallet_type) {
+                    const a = this.user.wallet
+                    for (let i = 0; i < a.length; i++) {
+                        let item = a[i]
+                        if (item.wallet_type == wallet_type) {
+                            return item
+                        }
+                    }
+                    return null
+                },
                 downloadCanvasImamge(selector, name) {
                     var canvas = document.querySelector(selector)
                     var url = canvas.toDataURL('image/png')
@@ -385,7 +398,7 @@
                     a.dispatchEvent(event)
                 },
                 getWallet() {
-                    this.get('/api/wallet-address/' + this.wallet_address, {}, (data) => {
+                    this.get('/api/wallet-address/' + this.usdt_trc20_address, {}, (data) => {
                         let a = data.data.token_transfers
                         let list = []
                         for (let i = 0; i < a.length; i++) {
@@ -487,16 +500,19 @@
                     }
                 },
                 init() {
-                    // this.getWallet()
-                    // setInterval(() => {
-                    //     this.getWallet()
-                    // }, 1000 * 60 * 5)
-
                     this.get('/api/startup', {}, (data) => {
                         this.currency = data.data.currency
                         this.user = data.data.user
                         this.get('/api/coincap-coin-list/caches', {}, (data) => {
                             let a = data.data.value
+
+                            this.usdt_trc20_address = this.getUserWalletAddress('usdt_trc20')['wallet_address']
+                            this.getWallet()
+                            clearInterval(this.temp_setInterval)
+                            this.temp_setInterval = setInterval(() => {
+                                this.getWallet()
+                            }, 1000 * 60 * 5)
+
                             this.usd.btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd) * this.user.btc
                             this.usd.eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd) * this.user.eth
                             this.usd.usdt_trc20 = this.user.usdt_trc20
