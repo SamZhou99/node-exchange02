@@ -102,7 +102,7 @@ let _t = {
 
 			let value = _t.getFilterData(axios_result.data.data)
 
-			console.log(_t.name, axios_result.data.length, value)
+			// console.log(_t.name, axios_result.data.length, value)
 
 			if (_t.callback) {
 				_t.callback({ key: _t.api.market_tickers.key, value: value })
