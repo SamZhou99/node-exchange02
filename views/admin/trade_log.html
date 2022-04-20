@@ -74,6 +74,7 @@
                                         <th>哈希</th>
                                         <th>系统钱包地址</th>
                                         <th>交易时间</th>
+                                        <th>记录时间</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -100,6 +101,7 @@
                                             <a v-if="item.type=='usdt_trc20'" :href="'https://usdt.tokenview.com/cn/address/'+item.to_address" target="_blank">{[item.to_address]}</a>
                                         </td>
                                         <td>{[item.time]}</td>
+                                        <td>{[item.create_time]}</td>
                                     </tr>
                                 </tbody>
                             </table>
