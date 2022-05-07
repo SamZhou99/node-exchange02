@@ -105,7 +105,7 @@
                         return
                     }
 
-                    let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
+                    let reg = /^([a-zA-Z]|[0-9]|[.])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
                     if (from.mail.indexOf('@') != -1 && !reg.test(from.mail)) {
                         this.alert(this.alertObj.err)
                     }
