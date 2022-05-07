@@ -149,7 +149,7 @@
                     return
                 }
 
-                let reg = /^([a-zA-Z]|[0-9]|[.])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
+                let reg = /^([a-zA-Z]|[0-9]|[.])(\w|\-|\.)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
                 if (from.mail.length < 5 || !reg.test(from.mail)) {
                     f.alert(alertObj.mail)
                     $(this).attr('disabled', false)
