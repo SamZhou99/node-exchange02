@@ -7,6 +7,9 @@ const config = require('../../config/web.js')
 const common = require('../../config/common.js')
 const service = require('../service/index.js')
 
+const service_login_log = require('../service/login.log.js')
+const service_page_view_log = require('../service/page.view.log.js')
+
 
 
 async function userAdd(ctx, inviteCode, account, password, type, mail, mobile, status, create_datetime, update_datetime) {
@@ -506,6 +509,22 @@ let __this = {
                     const notice = body.notice
                     fs.writeFileSync(__this.page.api.notice.path, notice)
                     ctx.body = { flag: 'ok' }
+                }
+            },
+
+
+            loginlog: {
+                async get(ctx) {
+                    const query = ctx.request.query
+                    const user_id = query.user_id
+                    const loginRes = await service_login_log.list(user_id)
+                    const pageViewRes = await service_page_view_log.list(user_id)
+                    ctx.body = {
+                        flag: 'ok', data: {
+                            loginRes,
+                            pageViewRes,
+                        }
+                    }
                 }
             }
         },

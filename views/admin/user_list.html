@@ -145,6 +145,7 @@
                                             </span>
                                             <button @click="onClickEdit(item)" class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
                                             <button v-if="item.wallet[3] != null" @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn"><i class="fa fa-refresh"></i> 更新充值</button>
+                                            <button @click="onClickLoginlog(item)" class="btn btn-info">登录记录</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -185,6 +186,67 @@
                         <div class="modal-footer text-center">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button @click="onClickEditSubmit()" :disabled="this.loading" type="button" class="btn btn-primary">确认修改</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="modalId2" tabindex="-1" role="dialog" aria-labelledby="modalIdTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="color: black">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <div class="form-row">
+                                <h5 id="modalIdTitle" class="col-md-6 modal-title">编辑用户数据 <span style="color:#c02424;">{[form.email]}</span> </h5>
+                                <div class="col-md-6">
+                                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding: 10px; margin: 10px;">
+                            <h4>登录记录</h4>
+                            <table width="100%" border="1">
+                                <tr>
+                                    <td>ID</td>
+                                    <td>UserID</td>
+                                    <td>IP</td>
+                                    <td>时间</td>
+                                </tr>
+                                <tr v-for="item,i in loginlog_list">
+                                    <td>{[item.id]}</td>
+                                    <td>{[item.user_id]}</td>
+                                    <td>{[item.ip]}</td>
+                                    <td>{[item.time]}</td>
+                                </tr>
+                            </table>
+
+                            <h4>浏览记录</h4>
+                            <table width="100%" border="1">
+                                <tr>
+                                    <td>ID</td>
+                                    <td>UserID</td>
+                                    <td>IP</td>
+                                    <td>Referer</td>
+                                    <td>URL</td>
+                                    <td>Time</td>
+                                </tr>
+                                <tr v-for="item,i in pageview_list">
+                                    <td>{[item.id]}</td>
+                                    <td>{[item.user_id]}</td>
+                                    <td>{[item.ip]}</td>
+                                    <td>{[item.referer]}</td>
+                                    <td>{[item.url]}</td>
+                                    <td>{[item.create_datetime]}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
 
                     </div>
@@ -232,8 +294,19 @@
                     btc: null,
                 },
                 currItem: null,
+
+                loginlog_list: [],
+                pageview_list: [],
             },
             methods: {
+                onClickLoginlog(item) {
+                    $('#modalId2').modal("show");
+                    const user_id = item.id
+                    this.get('/admin/api/loginlog', { user_id: user_id }, (data) => {
+                        this.loginlog_list = this.dataFormat(data.data.loginRes)
+                        this.pageview_list = this.dataFormat(data.data.pageViewRes)
+                    })
+                },
                 onClickShowBuyLog(item) {
                     item.buy_log_show = !item.buy_log_show
                 },
@@ -283,6 +356,14 @@
                         this.init()
                         this.refreshButtonStatus = false
                     })
+                },
+                dataFormat(arr) {
+                    for (let i = 0; i < arr.length; i++) {
+                        let item = arr[i]
+                        if (item.time) item.time = moment(item.item).format("YYYY/MM/DD HH:mm:ss")
+                        if (item.create_datetime) item.create_datetime = moment(item.item).format("YYYY/MM/DD HH:mm:ss")
+                    }
+                    return arr
                 },
                 setEditable() {
                     let t = this

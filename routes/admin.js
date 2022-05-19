@@ -111,6 +111,8 @@ router.get('/admin/api/withdraw-log', middleware.checkLogin, controllers.api.wit
 // 公告编辑
 router.get('/admin/api/notice', middleware.checkLogin, middleware.role, controllers.api.notice.get)
 router.post('/admin/api/notice', middleware.checkLogin, middleware.role, controllers.api.notice.post)
+// 查看记录
+router.get('/admin/api/loginlog', middleware.checkLogin, middleware.role, controllers.api.loginlog.get)
 // 数据库初始化
 router.get('/admin/api/init', controllers.admin.api.init)
 
