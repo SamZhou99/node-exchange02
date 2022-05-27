@@ -360,8 +360,8 @@
                 dataFormat(arr) {
                     for (let i = 0; i < arr.length; i++) {
                         let item = arr[i]
-                        if (item.time) item.time = moment(item.item).format("YYYY/MM/DD HH:mm:ss")
-                        if (item.create_datetime) item.create_datetime = moment(item.item).format("YYYY/MM/DD HH:mm:ss")
+                        if (item.time) item.time = moment(item.time).format("YYYY/MM/DD HH:mm:ss")
+                        if (item.create_datetime) item.create_datetime = moment(item.create_datetime).format("YYYY/MM/DD HH:mm:ss")
                     }
                     return arr
                 },
