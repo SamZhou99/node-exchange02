@@ -627,7 +627,7 @@
 						let _t = this
 						let res = JSON.parse(event.data)
 						this.list.forEach(function (item) {
-							
+
 							// platform coin
 							let key = item.node.id
 							if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
@@ -641,7 +641,9 @@
 								// }, time)
 
 							} else {
-
+								if (key.toLocaleLowerCase() == 'xch') {
+									return
+								}
 								// btc,eth,...
 								let v = res.cache[key]
 								if (v) {

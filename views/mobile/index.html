@@ -218,7 +218,9 @@
                                     // }, time)
 
                                 } else {
-
+                                    if (key.toLocaleLowerCase() == 'xch') {
+                                        return
+                                    }
                                     // btc,eth,...
                                     let v = res.cache[key]
                                     if (v) {
