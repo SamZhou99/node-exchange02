@@ -307,6 +307,7 @@
                         let _t = this
                         let res = JSON.parse(event.data)
                         this.list.forEach(function (item) {
+                            // platform coin
                             let key = item.node.id
                             if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
                                 let v = res.platform.price
@@ -322,15 +323,18 @@
                                     _t.newPrice = _t.round(v, 2, 4)
                                     window.postMessage({ data: _t.buySell(v) }, '/');
                                 }
-                            }
-                            let v = res.cache[key]
-                            if (v) {
-                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-                                item.node.priceUsd = _t.round(v, 1, 4)
-                                $('#' + key).addClass(className)
-                                setTimeout(() => {
-                                    $('#' + key).removeClass(className)
-                                }, time)
+
+                            } else {
+                                // btc,eth,...
+                                let v = res.cache[key]
+                                if (v) {
+                                    let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                    item.node.priceUsd = _t.round(v, 1, 4)
+                                    $('#' + key).addClass(className)
+                                    setTimeout(() => {
+                                        $('#' + key).removeClass(className)
+                                    }, time)
+                                }
                             }
                         })
                     }
