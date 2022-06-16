@@ -9,6 +9,8 @@ const service = require('../service/index.js')
 
 const service_login_log = require('../service/login.log.js')
 const service_page_view_log = require('../service/page.view.log.js')
+const service_mail = require('../service/mail/titan.js')
+const service_email_verify_code = require('../service/mail/email_verify_code.js')
 
 
 
@@ -113,7 +115,44 @@ let __this = {
             },
             async post(ctx) {
                 let body = ctx.request.body
-                await userAdd(ctx, body.inviteCode, null, body.password, 6, body.mail, null, 1, utils99.Time(), utils99.Time())
+                let mail = body.mail
+                let code = body.verificationCode
+                // 先检查邮箱验证码 是否 正确
+                let checkRes = await service_email_verify_code.oneByEmailCode(mail, code)
+                if (!checkRes) {
+                    ctx.body = { flag: 'The mailbox verification code is incorrect!' }
+                    return
+                }
+                await userAdd(ctx, body.inviteCode, null, body.password, 6, mail, null, 1, utils99.Time(), utils99.Time())
+                ctx.body = { flag: 'ok' }
+            },
+            // 发送邮箱验证码
+            async post_send_code(ctx) {
+                let body = ctx.request.body
+                let mail = body.mail
+                // 检查邮箱是否注册过
+                let user = await service.user.checkAccountExist(null, mail, null)
+                if (user) {
+                    let defLang = getDefaultLanguage(ctx)
+                    ctx.body = { flag: lang.list[defLang].page.reg.alert.mail_err }
+                    return
+                }
+                // 检查是否有旧的验证码
+                let checkRes = await service_email_verify_code.oneByEmail(mail)
+                if (checkRes) {
+                    let code = checkRes.code
+                    await __this.page.reg.sendMail(mail, code)
+                    ctx.body = { flag: 'ok', data: { mail, n: 2 } }
+                    return
+                }
+                let code = service_email_verify_code.getVerifyCode('1234567890')
+                await service_email_verify_code.add(mail, code)
+                await __this.page.reg.sendMail(mail, code)
+                ctx.body = { flag: 'ok', data: { mail, n: 1 } }
+            },
+
+            async sendMail(mail, code) {
+                await service_mail.sendMail(mail, 'Mailbox Verification Code', `Verification Code : <span style="color:#ffee00;background-color:#000000;font-size:2rem;padding:1rem;font-family:Verdana;">${code}</span>`)
             }
         },
         // 登录

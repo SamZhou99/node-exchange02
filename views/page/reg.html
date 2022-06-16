@@ -64,30 +64,27 @@
             <h2 class="form-signin-heading">{{lang.list[defLang].page.reg.title}}</h2>
 
             <label for="inputEmail" class="sr-only">Email address</label>
-            <input type="email" id="inputEmail" class="form-control"
-                placeholder="{{lang.list[defLang].page.reg.form.mainbox}}" required autofocus maxlength="128"
-                minlength="4">
+            <input type="email" id="inputEmail" class="form-control" placeholder="{{lang.list[defLang].page.reg.form.mainbox}}" required autofocus maxlength="128" minlength="4">
+
+            <label for="verificationCode" class="sr-only">Verification Code</label>
+            <input type="text" id="verificationCode" class="form-control" style="border-radius:0;" placeholder="Mailbox Verification Code" required maxlength="6" minlength="6">
+            <button id="verificationCodeBtn" class="btn btn-success btn-block" style="border-radius:0;" type="button">Send Verification Code</button>
 
             <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="inputPassword" class="form-control"
-                placeholder="{{lang.list[defLang].page.reg.form.password}}" required maxlength="32" minlength="4">
+            <input type="password" id="inputPassword" class="form-control" placeholder="{{lang.list[defLang].page.reg.form.password}}" required maxlength="32" minlength="4">
 
             <label for="inputPassword2" class="sr-only">Confirm password</label>
-            <input type="password" id="inputPassword2" class="form-control"
-                placeholder="{{lang.list[defLang].page.reg.form.password2}}" required maxlength="32" minlength="4">
+            <input type="password" id="inputPassword2" class="form-control" placeholder="{{lang.list[defLang].page.reg.form.password2}}" required maxlength="32" minlength="4">
 
             <label for="inviteCode" class="sr-only">Invite code</label>
-            <input type="text" id="inviteCode" class="form-control"
-                placeholder="{{lang.list[defLang].page.reg.form.invite_code}}" required maxlength="4" minlength="4">
+            <input type="text" id="inviteCode" class="form-control" placeholder="{{lang.list[defLang].page.reg.form.invite_code}}" required maxlength="4" minlength="4">
 
             <div class="checkbox">
                 <label>
-                    <input id="remember" type="checkbox" value="remember-me" checked> {{lang.list[defLang].page.reg.read}} <a
-                        href="/help/user-greement">{{lang.list[defLang].page.reg.user_agreement}}</a>
+                    <input id="remember" type="checkbox" value="remember-me" checked> {{lang.list[defLang].page.reg.read}} <a href="/help/user-greement">{{lang.list[defLang].page.reg.user_agreement}}</a>
                 </label>
             </div>
-            <button id="submit_btn" class="btn btn-lg btn-primary btn-block"
-                type="button">{{lang.list[defLang].page.reg.submit_button}}</button>
+            <button id="submit_btn" class="btn btn-lg btn-primary btn-block" type="button">{{lang.list[defLang].page.reg.submit_button}}</button>
         </form>
 
 
@@ -118,7 +115,7 @@
                 $('#inviteCode').val(GetRequest().invite)
             }
 
-            let temp
+            let temp, temp2, timeLen, btnContent
             let alertObj = JSON.parse('{{lang.list[defLang].page.reg.alert}}'.replace(/&#34;/g, '"'))
             let f = {
                 alert: (text) => {
@@ -133,10 +130,64 @@
                     }, 7000)
                 }
             }
+
+            function startTime() {
+                if (!btnContent) {
+                    btnContent = $('#verificationCodeBtn').html()
+                }
+                timeLen = 60 * 3
+                $('#verificationCodeBtn').attr('disabled', true)
+                $('#verificationCodeBtn').html(timeLen + 's')
+                temp2 = setInterval(() => {
+                    timeLen--
+                    $('#verificationCodeBtn').html(timeLen + 's')
+                    if (timeLen <= 0) {
+                        stopTime()
+                        $('#verificationCodeBtn').html(btnContent)
+                    }
+                }, 1000)
+            }
+            function stopTime() {
+                $('#verificationCodeBtn').attr('disabled', false)
+                clearInterval(temp2)
+            }
+
+            $('#verificationCodeBtn').on('click', function () {
+                let from = {
+                    mail: $('#inputEmail').val(),
+                    verificationCode: $('#verificationCode').val(),
+                    password: $('#inputPassword').val(),
+                    password1: $('#inputPassword2').val(),
+                    inviteCode: $('#inviteCode').val(),
+                    remember: $('#remember').prop("checked"),
+                }
+
+                let reg = /^([a-zA-Z]|[0-9]|[.])(\w|\-|\.)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
+                if (from.mail.length < 5 || !reg.test(from.mail)) {
+                    f.alert(alertObj.mail)
+                    // $(this).attr('disabled', false)
+                    return
+                }
+
+
+                startTime()
+
+                console.log(from.mail)
+                // Send Verification Code
+                $.post("/send-mail-code", { mail: from.mail }, function (data) {
+                    if (data.flag != 'ok') {
+                        alert(data.flag)
+                        return
+                    }
+                }, 'json')
+            })
+
+
             $('#submit_btn').on('click', function () {
                 $(this).attr('disabled', true)
                 let from = {
                     mail: $('#inputEmail').val(),
+                    verificationCode: $('#verificationCode').val(),
                     password: $('#inputPassword').val(),
                     password1: $('#inputPassword2').val(),
                     inviteCode: $('#inviteCode').val(),
@@ -152,6 +203,12 @@
                 let reg = /^([a-zA-Z]|[0-9]|[.])(\w|\-|\.)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
                 if (from.mail.length < 5 || !reg.test(from.mail)) {
                     f.alert(alertObj.mail)
+                    $(this).attr('disabled', false)
+                    return
+                }
+
+                if (!from.verificationCode) {
+                    f.alert('Please enter the mailbox verification code.')
                     $(this).attr('disabled', false)
                     return
                 }

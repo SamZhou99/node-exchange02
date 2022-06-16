@@ -17,6 +17,7 @@ router.get('/language/:lang', middleware.commmonData, controllers.language)
 // 注册
 router.get('/reg', middleware.commmonData, controllers.reg.page)
 router.post('/reg', middleware.commmonData, controllers.reg.post)
+router.post('/send-mail-code', middleware.commmonData, controllers.reg.post_send_code)
 // 登录
 router.get('/login', middleware.commmonData, controllers.login.page)
 router.get('/login/test', middleware.commmonData, controllers.login.test)

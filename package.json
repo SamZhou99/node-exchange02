@@ -24,6 +24,7 @@
     "koa-views": "^7.0.2",
     "koa2-cors": "^2.0.6",
     "node-utils99": "^1.1.20211113",
+    "nodemailer": "^6.7.5",
     "pako": "^2.0.4",
     "websocket": "^1.0.34"
   }
