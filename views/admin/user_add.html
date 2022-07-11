@@ -224,7 +224,7 @@
                     this.post('/admin/api/user-add', {
                         account: $('#account').val(),
                         mail: $('#mail').val(),
-                        password: $('#password').val(),
+                        password: md5($('#password').val()),
                         type: this.userType,
                         mobile: $('#mobile').val(),
                         status: $('#status').val(),
