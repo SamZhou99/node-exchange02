@@ -627,35 +627,36 @@
 						let _t = this
 						let res = JSON.parse(event.data)
 						this.list.forEach(function (item) {
-
 							// platform coin
 							let key = item.node.id
+
 							if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
 								let v = res.platform.price
-								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+								let className = res.platform.is_up > 0 ? 'donghuaGreen' : 'donghuaRed'
 								item.node.priceUsd = _t.round(v, 1, 6)
-								item.node.changePercent24Hr = _t.round(res.platform.price_percent * res.platform.ts_percent, 1, 2)
+								item.node.changePercent24Hr = res.platform.is_up > 0 ? _t.round(res.platform.price_percent * res.platform.ts_percent, 1, 2) : -_t.round(res.platform.price_percent * res.platform.ts_percent, 1, 2)
 								// $('#' + key).addClass(className)
 								// setTimeout(() => {
 								// 	$('#' + key).removeClass(className)
 								// }, time)
 
-							} else {
-								if (key.toLocaleLowerCase() == 'xch') {
-									return
-								}
-								// btc,eth,...
-								let v = res.cache[key]
-								if (v) {
-									let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-									item.node.priceUsd = _t.round(v, 1, 6)
-									// $('#' + key).addClass(className)
-									// setTimeout(() => {
-									// 	$('#' + key).removeClass(className)
-									// }, time)
-								}
-
 							}
+
+							if (key == 'ssvp') {
+								return
+							}
+
+							// btc,eth,...
+							let v = res.cache[key]
+							if (v) {
+								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+								item.node.priceUsd = _t.round(v, 1, 6)
+								// $('#' + key).addClass(className)
+								// setTimeout(() => {
+								// 	$('#' + key).removeClass(className)
+								// }, time)
+							}
+
 						})
 					}
 				},
