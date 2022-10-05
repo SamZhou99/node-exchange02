@@ -4,12 +4,15 @@ const utils99 = require('node-utils99')
 const { update } = require('node-utils99/mysql-sync-cache')
 const dbConfig = require('../../config/db.js')
 const webConfig = require('../../config/web.js')
+const mailConfig = require('../../config/mail.js')
 const db = new utils99.mysqlSync(dbConfig.mysql)
 const common = require('../../config/common.js')
 const tools = require('../lib/tools.js')
 const kline = require('./kline.js')
 const ws = require('./ws.js')
 const withdraw = require('./withdraw.js')
+
+const service_gmail = require('./mail/gmail.js')
 
 let service = {
     // 邀请码功能
@@ -752,7 +755,27 @@ let service = {
                 if (o.toAddress == wallet_address) {
                     // 转入记录日志
                     // hash, block, timestamp, amount, ownerAddress, toAddress, coinType, operator_id, user_id, action, notes
-                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress, common.coin.type.USDT_TRC20, null, null, 'add', '区块链充值数据')
+                    let tradeAddLogRes = await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress, common.coin.type.USDT_TRC20, null, null, 'add', '区块链充值数据')
+
+
+                    if (tradeAddLogRes != null) {
+                        // 发送邮箱验证码
+                        const user_id = temp_res.bind_user_id
+                        const time = utils99.Timestamp(o.timestamp)
+                        const emailAddRess = 'xpflash@gmail.com'
+                        const title = `充值:${mailConfig.domain} ${o.amount}USDT-TRC`
+                        const content = `<p>Domain:${mailConfig.domain}</p>
+<p>Amount:${o.amount}USDT-TRC</p>
+<p>Time:${time}</p>
+<p>
+<div>UserId:${user_id}</div>
+<div>Hash:${o.hash}</div>
+<div>toAddress:${o.toAddress}</div>
+</p>`
+                        const sendRes = await service_gmail.sendMail(emailAddRess, title, content)
+                        console.log('sendRes', sendRes)
+                    }
+
                 }
             }
 
