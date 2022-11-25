@@ -599,6 +599,8 @@
                         volume: item.vol,
                     })
                 }
+                chartDataList[chartDataList.length - 1].high = chartDataList[chartDataList.length - 1].open
+                chartDataList[chartDataList.length - 1].close = chartDataList[chartDataList.length - 1].open
                 chart.applyNewData(chartDataList)
 
                 initWS()
@@ -637,7 +639,9 @@
                 let host = window.location.host;
                 let host2 = document.domain;
 
-                let ws = new WebSocket(`ws://${host2}:3031/coin/price/platform`)
+                // let ws = new WebSocket(`ws://${host2}:3031/coin/price/platform`)
+                let ws = new WebSocket(`wss://ws.xch-ex.com/coin/price/platform`)
+
                 ws.onopen = () => {
                     console.log('websocket init ...')
                 };
